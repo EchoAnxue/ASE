@@ -2,7 +2,7 @@
  * @Author: mirroee 3323458794@qq.com
  * @Date: 2025-02-08 03:37:46
  * @LastEditors: mirroee 3323458794@qq.com
- * @LastEditTime: 2025-02-08 04:58:26
+ * @LastEditTime: 2025-02-08 05:07:12
  * @FilePath: \ASE\MenuItem.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -38,7 +38,7 @@ public class MenuItem {
             throw new GenerateException("Menu item generate error: Name is empty.") ;
         }
         if (!isValidCategory(category)) {
-            throw new GenerateException("Menu item generate error: Category is invalid, must be one of beverage, food or dessert.") ;)
+            throw new GenerateException("Menu item generate error: Category is invalid, must be one of beverage, food or dessert.") ;
         
         if (cost <= 0 || cost >= 1000) {
             throw new GenerateException("Menu item generate error: The price must be a positive number between 0 and 1000.") ; }
