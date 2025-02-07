@@ -4,38 +4,51 @@ import java.util.Map;
 
 /**
  * This class represents an order made by a customer.
+ * @author <Suntanqing FU> <sf4009@hw.ac.uk>
+ * @version 0.03
+ * @since 2025-02-07
  * 
  * ****Attributes****:
- * @orderID: unique identifier for the order
- * @itemsOrdered: a map of menu items and their quantities ordered
- * @customerID: unique identifier for the customer who made the order
- * @time: timestamp indicating when the order was made
- * @payment: boolean value indicating if the order has been paid
- * @prize: the total price of the order after any discounts have been applied
- * @isRegularCustomer: boolean value indicating if the customer is a regular customer (orders amount > 7)
- * @totalDiscount: the total amount of any applicable discounts applied to the order
- * @originalPrice: the original price of the order before any discounts were applied
+ * @orderID: int, unique identifier for the order
+ * @itemsOrdered: Map<MenuItem,Integer>, a map of menu items and their quantities ordered
+ * @customerID: int, unique identifier for the customer who made the order
+ * @time: String, timestamp indicating when the order was made
+ * @payment: boolean, boolean value indicating if the order has been paid
+ * @prize: float, the total price of the order after any discounts have been applied
+ * @isRegularCustomer: boolean, boolean value indicating if the customer is a regular customer (orders amount > 7)
+ * @totalDiscount: float, the total amount of any applicable discounts applied to the order
+ * @originalPrice: float, the original price of the order before any discounts were applied
  * 
  * ****Methods****:
  * @addItem: adds an item to the itemsOrdered HashMap
+ * parameters: item, quantity
  * return: void
  * @getPaymentStatus: returns the payment status of the order
+ * parameters: none
  * return: boolean
  * @setPaymentStatus: sets the payment status of the order to true
+ * parameters: none
  * return: void
  * @calculateTotalPrice: calculates the total price of the order by multiplying the cost of each item by its quantity
+ * parameters: none
  * return: float
  * @calculateDiscount: applies any applicable discounts to the order
+ * parameters: none
  * return: void
  * @getID: returns the orderID
+ * parameters: none
  * return: int
  * @getOrder: returns the itemsOrdered HashMap
+ * parameters: none
  * return: HashMap<MenuItem, Integer>
  * @getCustoID: returns the customerID
+ * parameters: none
  * return: int
  * @getTime: returns the timestamp
+ * parameters: none
  * return: String
  * @toString: returns a string representation
+ * parameters: none
  * return: String
  */
 public class Order {
