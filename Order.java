@@ -72,9 +72,23 @@ public class Order {
         this.time = LocalDateTime.now().toString();
         this.payment = false;
         this.prize = 0.0f;
-        this.isRegularCustomer = customer.getOrderCount();
+        this.isRegularCustomer = customer.getOrderCount()>0;
         this.totalDiscount = 0.0f;
         this.originalPrice = 0.0f;
+    }
+
+    public Order(int orderID, Map<MenuItem, Integer> itemsOrdered, int customerID,
+                 String time, boolean payment, Float prize, boolean isRegularCustomer,
+                 float totalDiscount, float originalPrice) {
+        this.orderID = orderID;
+        this.itemsOrdered = itemsOrdered;
+        this.customerID = customerID;
+        this.time = time;
+        this.payment = payment;
+        this.prize = prize;
+        this.isRegularCustomer = isRegularCustomer;
+        this.totalDiscount = totalDiscount;
+        this.originalPrice = originalPrice;
     }
 
     // Method to add an item to the order
@@ -153,5 +167,17 @@ public class Order {
     @Override
     public String toString() {
         return "Order{id=" + orderID + ", customer=" + customerID + ", items=" + itemsOrdered.size() + "}";
+    }
+
+    public boolean isRegularCustomer() {
+        return isRegularCustomer;
+    }
+
+    public float getTotalDiscount() {
+        return totalDiscount;
+    }
+
+    public float getOriginalPrice() {
+        return originalPrice;
     }
 }
