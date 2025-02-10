@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * This class represents an order made by a customer.
  * @author <Suntanqing FU> <sf4009@hw.ac.uk>
- * @version 0.03
+ * @version 0.04
  * @since 2025-02-07
  * 
  * ****Attributes****:
@@ -20,6 +20,9 @@ import java.util.Map;
  * @originalPrice: float, the original price of the order before any discounts were applied
  * 
  * ****Methods****:
+ * @setRegularCustomer: sets the regular customer status of the order
+ * parameters: isRegularCustomer
+ * return: void
  * @addItem: adds an item to the itemsOrdered HashMap
  * parameters: item, quantity
  * return: void
@@ -65,16 +68,22 @@ public class Order {
     /** Constructor for creating a new order
     * parameters: orderID, customerID
     */
-    public Order(int orderID, Customer customer) {
+    public Order(int orderID, Customer customer, boolean isRegularCustomer) {
         this.orderID = orderID;
         this.itemsOrdered = new HashMap<>();
         this.customerID = customer.getID();
         this.time = LocalDateTime.now().toString();
         this.payment = false;
         this.prize = 0.0f;
-        this.isRegularCustomer = customer.getOrderCount();
+        this.isRegularCustomer = false;
         this.totalDiscount = 0.0f;
         this.originalPrice = 0.0f;
+    }
+
+    // Method to set the regular customer status
+    // parameter: isRegularCustomer
+    public void setRegularCustomer(boolean isRegularCustomer) {
+        this.isRegularCustomer = isRegularCustomer;
     }
 
     // Method to add an item to the order
@@ -84,7 +93,7 @@ public class Order {
     }
 
     // Method to set the payment status to true
-    // parameter: payment
+    // parameter: None
     public void setPaymentStatus() {
         payment = true;
     }
