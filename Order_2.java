@@ -5,8 +5,8 @@ import java.util.Map;
 /**
  * This class represents an order made by a customer.
  * @author <Suntanqing FU> <sf4009@hw.ac.uk>
- * @version 0.05
- * @since 2025-02-10
+ * @version 0.04
+ * @since 2025-02-07
  * 
  * ****Attributes****:
  * @orderID: int, unique identifier for the order
@@ -53,15 +53,6 @@ import java.util.Map;
  * @toString: returns a string representation
  * parameters: none
  * return: String
- * @isRegularCustomer: returns the regular customer status
- * parameters: none
- * return: boolean
- * @getTotalDiscount: returns the total discount applied to the order
- * parameters: none
- * return: float
- * @getOriginalPrice: returns the original price of the order
- * parameters: none
- * return: float
  */
 public class Order {
     private int orderID;
@@ -89,20 +80,6 @@ public class Order {
         this.originalPrice = 0.0f;
     }
 
-    public Order(int orderID, Map<MenuItem, Integer> itemsOrdered, int customerID,
-                 String time, boolean payment, Float prize, boolean isRegularCustomer,
-                 float totalDiscount, float originalPrice) {
-        this.orderID = orderID;
-        this.itemsOrdered = itemsOrdered;
-        this.customerID = customerID;
-        this.time = time;
-        this.payment = payment;
-        this.prize = prize;
-        this.isRegularCustomer = isRegularCustomer;
-        this.totalDiscount = totalDiscount;
-        this.originalPrice = originalPrice;
-    }
-
     // Method to set the regular customer status
     // parameter: isRegularCustomer
     public void setRegularCustomer(boolean isRegularCustomer) {
@@ -116,6 +93,7 @@ public class Order {
     }
 
     // Method to set the payment status to true
+    // parameter: None
     public void setPaymentStatus() {
         payment = true;
     }
@@ -184,17 +162,5 @@ public class Order {
     @Override
     public String toString() {
         return "Order{id=" + orderID + ", customer=" + customerID + ", items=" + itemsOrdered.size() + "}";
-    }
-
-    public boolean isRegularCustomer() {
-        return isRegularCustomer;
-    }
-
-    public float getTotalDiscount() {
-        return totalDiscount;
-    }
-
-    public float getOriginalPrice() {
-        return originalPrice;
     }
 }
