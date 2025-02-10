@@ -68,7 +68,7 @@ public class Order {
     /** Constructor for creating a new order
     * parameters: orderID, customerID
     */
-    public Order(int orderID, Customer customer, boolean isRegularCustomer) {
+    public Order(int orderID, Customer customer) {
         this.orderID = orderID;
         this.itemsOrdered = new HashMap<>();
         this.customerID = customer.getID();
