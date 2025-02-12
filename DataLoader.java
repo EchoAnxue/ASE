@@ -8,11 +8,13 @@ import java.util.Map;
 // should include all items and all those details in MenuItem,  then new every
 // MenuItem entities for Menu class. try to modify those class diagram to finish this job.
 public class DataLoader {
-    private HashMap<String,MenuItem> StorageList = new HashMap<String,MenuItem>();
-    private HashMap<Integer,Order>  orderList = new HashMap<>();
+    private static HashMap<String,MenuItem> StorageList = new HashMap<String,MenuItem>();
 
-        private void loadMenuItemsFromCSV(String filePath) throws IOException {
-        this.StorageList = new HashMap<String,MenuItem>();
+    private static HashMap<Integer,Order> orderListHash = new HashMap<>();
+    private static List<List<Order>> OrderList = new ArrayList<>();
+
+        public static void loadMenuItemsFromCSV(String filePath) throws IOException {
+
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
 
@@ -33,7 +35,7 @@ public class DataLoader {
             String description = fields[4];
 
             MenuItem item = new MenuItem(name, category, cost, ID, description);
-            StorageList.put(name,item);
+            StorageList.put(ID,item);
         }
 
         reader.close();
@@ -41,7 +43,7 @@ public class DataLoader {
 
     }
 //    "C:\\Users\\lenovo\\IdeaProjects\\ASE\\src\\main\\java\\org\\example\\menu2.csv"
-        public HashMap<String,MenuItem> loadMenu() throws IOException {
+        public static HashMap<String,MenuItem> loadMenu() throws IOException {
 
         try {
             loadMenuItemsFromCSV("./menu.csv");
@@ -52,12 +54,12 @@ public class DataLoader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return this.StorageList;
+        return StorageList;
     }
     // TODO loadproducts() and loadOrder()
 // i would like to delete loadproducts(),casue it seems that we don't need to think about the storage
 //    quantity
-    public void writeOrder(Order order) throws IOException {
+    public static void writeOrder(Order order) throws IOException {
             String orderID = String.valueOf(order.getID());
             String custoID = String.valueOf(order.getCustoID());
             boolean payment = order.getPaymentStatus();
@@ -82,13 +84,13 @@ public class DataLoader {
             }
 
 
-            System.out.println("订单数据已成功写入 " + filePath);
+            System.out.println("order data has been written to file: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
- public void loadOrder() throws IOException {
-     this.orderList = new HashMap<Integer,Order>();
+ public static void loadOrder() throws IOException {
+
      BufferedReader reader = new BufferedReader(new FileReader("./order.csv"));
      String line;
 
@@ -118,21 +120,22 @@ public class DataLoader {
          float totalDiscount = Float.parseFloat(fields[9]);
          float originalPrice = Float.parseFloat(fields[10]);
 
-         if (!this.orderList.containsKey(orderID)) {
+         if (!orderListHash.containsKey(orderID)) {
              Map<MenuItem, Integer> itemsOrdered= new HashMap<>();
-             if(!this.StorageList.containsKey(itemIdentifier)) {
+             if(!StorageList.containsKey(itemIdentifier)) {
                  throw new CSVReadException("no this item in storage, maybe some mistakes");
              }
-             itemsOrdered.put(this.StorageList.get(itemIdentifier), quantity);
-             this.orderList.put(orderID,new Order(orderID,itemsOrdered,custoID,orderTime
+             itemsOrdered.put(StorageList.get(itemIdentifier), quantity);
+             orderListHash.put(orderID,new Order(orderID,itemsOrdered,custoID,orderTime
              ,payment,prize,isRegular,totalDiscount,originalPrice));
              System.out.println("1");
          }
          else {
-             if(!this.StorageList.containsKey(itemIdentifier)) {
+             //exist order, add item to order
+             if(!StorageList.containsKey(itemIdentifier)) {
                  throw new CSVReadException("no this item in storage, maybe some mistakes");
              }
-             this.orderList.get(orderID).addItem(this.StorageList.get(itemIdentifier),quantity);
+             orderListHash.get(orderID).addItem(StorageList.get(itemIdentifier),quantity);
              System.out.println("2");
          }
 
@@ -142,13 +145,36 @@ public class DataLoader {
      reader.close();
  }
 
-    public HashMap<Integer, Order> getOrderList() {
-        return orderList;
+    public static List<List<Order>> getOrderList() throws IOException {
+        //hashmamp<orderID,Order> orderlisthash
+        loadOrder();
+
+
+            for(Map.Entry<Integer,Order> entry : orderListHash.entrySet()) {
+                int orderID = entry.getKey();
+                int custoID = entry.getValue().getCustoID();
+
+                if(OrderList.size()<custoID){
+                    //not exist, create a new list customer{}
+                    ArrayList<Order> temp = new ArrayList<>();
+                    temp.add(entry.getValue());
+                    OrderList.add(temp);
+                }
+                else{
+                    //exist customer, add order to list
+                    OrderList.get(custoID).add(entry.getValue());
+
+
+                }
+
+            }
+
+            return OrderList;
     }
 
 
     public void setOrderList(HashMap<Integer, Order> orderList) {
-        this.orderList = orderList;
+        orderList = orderList;
     }
 }
 class OrderEntry {
