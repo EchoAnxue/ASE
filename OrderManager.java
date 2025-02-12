@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used to manage the orders and customers and generate reports when an order is added or removed.
+ * This class is used to manage the orders and customers.
  * @author <Suntanqing FU> <sf4009@hw.ac.uk>
- * @version 0.01
- * @since 2025-02-09
+ * @version 0.03
+ * @since 2025-02-12
  * 
  * ****Attributes****:
  * @orderList: a List to store the order list of each customer
+ * @customerOrderCount: a List to store the order count of each customer
  * @report: a report generator object to generate reports when an order is added or removed
  * 
  * ****Methods****:
@@ -30,19 +31,16 @@ public class OrderManager {
     private List<List<Order>> orderList;
     // index is CustomerID, int is order count
     private List<Integer> customerOrderCount;
-    public ReportGenerator report;
     
     public OrderManager() {
         this.orderList = new ArrayList<List<Order>>();
         this.customerOrderCount = new ArrayList<Integer>();
-        this.report = new ReportGenerator();
     }
     
     // This method is added to add an order to the order list, update the customer order count and update the report
     public void addOrder(Order order) throws NotFoundException, AlreadyExistException {
         int custoID = order.getCustoID();
         if (orderList.size() > custoID && custoID >= 0) {
-            report.increaseOrderCount(order);
             if(getOrderCount(custoID) > 7)
                 order.setRegularCustomer(true);
             orderList.get(custoID).add(order);
@@ -57,7 +55,6 @@ public class OrderManager {
         for (int custoID = 0; custoID < orderList.size(); custoID++) { // custoID = index
             for (int i = 0; i < orderList.get(custoID).size(); i++) { // i = index of order of one customer
                 if (orderList.get(custoID).get(i).getID() == orderID) {
-                    report.decreaseOrderCount(orderList.get(custoID).get(i));
                     orderList.get(custoID).remove(i);
                     customerOrderCount.set(custoID, customerOrderCount.get(custoID) - 1);
                     System.out.println("Order "+orderID+" is removed.");
