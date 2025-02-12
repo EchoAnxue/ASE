@@ -13,8 +13,8 @@ import java.util.List;
  * @customerOrderCount: a List to store the order count of each customer
  * 
  * ****Methods****:
- * @addOrder(Order order): This method is used to add an order to the order list, update the customer order count and update the report.
- * @removeOrder(int orderID): This method is used to remove an order from the order list, update the customer order count and update the report.
+ * @addOrder(Order order): This method is used to add an order to the order list, update the customer order count.
+ * @removeOrder(int orderID): This method is used to remove an order from the order list, update the customer order count.
  * @addCustomer(Customer customer): This method is used to add a new customer to the order list.
  * @getCustomerByOrder(int orderID): This method is used to get the customer by using the order.
  * @getOrderByOrderID(int id): This method is used to get the order by using the order ID.
