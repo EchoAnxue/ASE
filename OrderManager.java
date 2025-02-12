@@ -11,7 +11,6 @@ import java.util.List;
  * ****Attributes****:
  * @orderList: a List to store the order list of each customer
  * @customerOrderCount: a List to store the order count of each customer
- * @report: a report generator object to generate reports when an order is added or removed
  * 
  * ****Methods****:
  * @addOrder(Order order): This method is used to add an order to the order list, update the customer order count and update the report.
