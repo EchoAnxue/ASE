@@ -30,7 +30,7 @@ class ReportGenerator {
     public void countInformation(OrderManager orderManager) {
         itemOrderCount.clear();
         totalIncome = 0;
-        List<List<Order>> finalOrderList = orderManager.orderList;
+        List<List<Order>> finalOrderList = orderManager.getAllOrder();
         
         for (List<Order> orders : finalOrderList) {
             for (Order order : orders) {
