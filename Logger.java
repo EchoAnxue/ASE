@@ -26,9 +26,22 @@ import java.util.List;
 public class Logger {
     private List<String> logEntries;
     private static final String LOG_FILE = "log.txt";
+    private static Logger instance; // Singleton instance
 
-    public Logger() {
+    // Private constructor to prevent external instantiation
+    private Logger() {
         this.logEntries = new ArrayList<>();
+    }
+
+    /**
+     * Gets the unique instance of Logger
+     * @return Logger instance
+     */
+    public static Logger getInstance() {
+        if (instance == null) {
+            instance = new Logger();
+        }
+        return instance;
     }
 
     // Log ReportGenerator data
@@ -58,4 +71,6 @@ public class Logger {
             System.err.println("Error saving logs to file: " + e.getMessage());
         }
     }
+
+    
 }
