@@ -1,4 +1,6 @@
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -29,22 +31,108 @@ public class OrderManager {
     private List<List<Order>> orderList;
     // index is CustomerID, int is order count
     private List<Integer> customerOrderCount;
-
+    private ArrayList<Customer> cusotmerList;
+    private int currentCustomerId;
+    private int currentOrderId;
     public OrderManager() {
-        this.orderList = new ArrayList<List<Order>>();
+
+        try {
+            DataLoader.loadOrder();
+            DataLoader.loadCustomersList();
+            this.orderList = DataLoader.getOrderList();
+            this.cusotmerList = DataLoader.getCustomerList();
+        } catch (CSVReadException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
         this.customerOrderCount = new ArrayList<Integer>();
+        // 假设 orderList 已填充数据
+
+        int maxOrderID = -1;
+        int maxCustomerID = -1;
+
+        for (List<Order> orders : orderList) {
+            for (Order order : orders) {
+                if (order.getID() > maxOrderID) {
+                    maxOrderID = order.getID();
+                }
+                if (order.getCustoID() > maxCustomerID) {
+                    maxCustomerID = order.getCustoID();
+                }
+            }
+        }
+        currentCustomerId = maxCustomerID;
+        currentOrderId = maxOrderID;
+
+
+    }
+    public synchronized int  incrementCustomerId() {
+        System.out.println("Before Inc " + currentCustomerId);
+        currentCustomerId++;
+        System.out.println("After Inc " + currentCustomerId);
+        return currentCustomerId;
+    }
+
+    public synchronized int decrementCurrentCustomerId() {
+        System.out.println("\\t\\t\\t Before Dec " + currentCustomerId);
+        currentCustomerId--;
+        System.out.println("\\t\\t\\t After Dec " + currentCustomerId);
+        return currentCustomerId;
+    }
+    public synchronized int incrementOrderId() {
+        System.out.println("\\t\\t\\t\\t Before Inc " + currentOrderId);
+        currentOrderId++;
+        System.out.println("\\t\\t\\t\\t After Inc " + currentOrderId);
+        return currentOrderId;
+    }
+
+    public synchronized int decrementCurrentOrderId() {
+        System.out.println("\\t\\t\\t\\t\\t Before Dec " + currentOrderId);
+        currentOrderId--;
+        System.out.println("\\t\\t\\t\\t\\t After Dec " + currentOrderId);
+        return currentOrderId;
+    }
+    public List<List<Order>> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<List<Order>> orderList) {
+        this.orderList = orderList;
+    }
+
+    public List<Integer> getCustomerOrderCount() {
+        return customerOrderCount;
+    }
+
+    public void setCustomerOrderCount(List<Integer> customerOrderCount) {
+        this.customerOrderCount = customerOrderCount;
     }
 
     // This method is added to add an order to the order list, update the customer order count and update the report
-    public void addOrder(Order order) throws NotFoundException, AlreadyExistException {
+    public void addOrder(Order order)   {
         int custoID = order.getCustoID();
+//        TODO: 这里是假设存在该顾客
         if (orderList.size() > custoID && custoID >= 0) {
             if(getOrderCount(custoID) > 7)
                 order.setRegularCustomer(true);
             orderList.get(custoID).add(order);
             customerOrderCount.set(custoID, customerOrderCount.get(custoID) + 1);
-        } else {
+        }
+//        TODO: 这里是假设不存在该顾客，需要添加顾客
+        else if (orderList.size() <= custoID) {
+//           update customerCount,
+            addCustomer(custoID);
+
+            orderList.get(custoID).add(order);
+//            customerOrderCount.set(custoID, customerOrderCount.get(custoID) + 1);
+            }
+
+        else {
             throw new NotFoundException("Customer ID "+order.getCustoID());
+
         }
     }
 
@@ -64,8 +152,8 @@ public class OrderManager {
     }
 
     // This method is added to add new customer to the order list.
-    public void addCustomer(Customer customer) {
-        int custoID = customer.getID();
+    public void addCustomer(int custoID) {
+
         if (orderList.size() > custoID && custoID >= 0) {
             System.out.println("Customer "+custoID+" already exist.");
         } else {

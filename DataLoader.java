@@ -27,7 +27,7 @@ public class DataLoader {
                 break; // 跳过空行
             }
 
-            String[] fields = line.split("\t");
+            String[] fields = line.replace("\"","").split(",");
 
             String name = fields[0];
             String category = fields[1];
@@ -44,7 +44,7 @@ public class DataLoader {
 
     }
 //    "C:\\Users\\lenovo\\IdeaProjects\\ASE\\src\\main\\java\\org\\example\\menu2.csv"
-        public static HashMap<String,MenuItem> loadMenu() throws IOException {
+        public static HashMap<String,MenuItem> loadMenu()   {
 
         try {
             loadMenuItemsFromCSV("./menu.csv");
@@ -52,15 +52,15 @@ public class DataLoader {
 //            for (MenuItem item : this.StorageList.values()) {
 //                System.out.println(item.getName() + " - " + item.getCategory() + " - " + item.getCost());
 //            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new CSVReadException("couldn't read file: " + "./menu.csv");
         }
         return StorageList;
     }
     //  loadproducts() and loadOrder()
 // i would like to delete loadproducts(),casue it seems that we don't need to think about the storage
 //    quantity
-    public static void writeOrder(Order order) throws IOException {
+    public static void writeOrder(Order order) throws CSVReadException {
             String orderID = String.valueOf(order.getID());
             String custoID = String.valueOf(order.getCustoID());
             boolean payment = order.getPaymentStatus();
@@ -86,93 +86,100 @@ public class DataLoader {
 
 
             System.out.println("order data has been written to file: " + filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new CSVReadException("couldn't write to file: " + filePath);
         }
     }
- public static void loadOrder() throws IOException {
+ public static void loadOrder() throws CSVReadException, IOException {
+    try {
+        BufferedReader reader = new BufferedReader(new FileReader("./order.csv"));
 
-     BufferedReader reader = new BufferedReader(new FileReader("./order.csv"));
-     String line;
 
-     // Skip header if present
-     reader.readLine();
+        String line;
 
-     while ((line = reader.readLine()) != null) {
+        // Skip header if present
+        reader.readLine();
 
-         if (line.trim().isEmpty()) {
-             break; // 跳过空行
-         }
-         if(!countComma(line,10)) {
-             System.out.println("line: " + line + " has wrong format, should have 10 fields");
-             throw new CSVReadException("line: " + line + " has wrong format, should have 10 fields");
-         }
-         String[] fields = line.split(",");
+        while ((line = reader.readLine()) != null) {
+
+            if (line.trim().isEmpty()) {
+                break; // 跳过空行
+            }
+            if(!countComma(line,10)) {
+                System.out.println("line: " + line + " has wrong format, should have 10 fields");
+                throw new CSVReadException("line: " + line + " has wrong format, should have 10 fields");
+            }
+            String[] fields = line.split(",");
 //         String orderID, String CustomerID, String Time, String itemID,
 //                 String itemName, int quantity,boolean payment,float prize,boolean isRegularCustomer,
 //         float totalDiscount,float originalPrice)
 
-         int orderID = Integer.parseInt(fields[0]);
-         int custoID = Integer.parseInt(fields[1]);
-         String orderTime = fields[2];
-         String itemIdentifier = fields[3];
-         String itemName = fields[4];
-         int quantity = Integer.parseInt(fields[5]);
-         boolean payment = Boolean.parseBoolean(fields[6]);
-         float prize = Float.parseFloat(fields[7]);
-         boolean isRegular = Boolean.parseBoolean(fields[8]);
-         float totalDiscount = Float.parseFloat(fields[9]);
-         float originalPrice = Float.parseFloat(fields[10]);
+            int orderID = Integer.parseInt(fields[0]);
+            int custoID = Integer.parseInt(fields[1]);
+            String orderTime = fields[2];
+            String itemIdentifier = fields[3];
+            String itemName = fields[4];
+            int quantity = Integer.parseInt(fields[5]);
+            boolean payment = Boolean.parseBoolean(fields[6]);
+            float prize = Float.parseFloat(fields[7]);
+            boolean isRegular = Boolean.parseBoolean(fields[8]);
+            float totalDiscount = Float.parseFloat(fields[9]);
+            float originalPrice = Float.parseFloat(fields[10]);
 
-         if (!orderListHash.containsKey(orderID)) {
-             Map<MenuItem, Integer> itemsOrdered= new HashMap<>();
-             if(!StorageList.containsKey(itemIdentifier)) {
-                 throw new CSVReadException("no this item in storage, maybe some mistakes");
-             }
-             itemsOrdered.put(StorageList.get(itemIdentifier), quantity);
-             orderListHash.put(orderID,new Order(orderID,itemsOrdered,custoID,orderTime
-             ,payment,prize,isRegular,totalDiscount,originalPrice));
+            if (!orderListHash.containsKey(orderID)) {
+                Map<MenuItem, Integer> itemsOrdered= new HashMap<>();
+                if(!StorageList.containsKey(itemIdentifier)) {
+                    throw new CSVReadException("no this item in storage, maybe some mistakes");
+                }
+                itemsOrdered.put(StorageList.get(itemIdentifier), quantity);
+                orderListHash.put(orderID,new Order(orderID,itemsOrdered,custoID,orderTime
+                        ,payment,prize,isRegular,totalDiscount,originalPrice));
 
-         }
-         else {
-             //exist order, add item to order
-             if(!StorageList.containsKey(itemIdentifier)) {
-                 throw new CSVReadException("no this item in storage, maybe some mistakes");
-             }
-             orderListHash.get(orderID).addItem(StorageList.get(itemIdentifier),quantity);
+            }
+            else {
+                //exist order, add item to order
+                if(!StorageList.containsKey(itemIdentifier)) {
+                    throw new CSVReadException("no this item in storage, maybe some mistakes");
+                }
+                orderListHash.get(orderID).addItem(StorageList.get(itemIdentifier),quantity);
 
-         }
+            }
 
 
-     }
+        }
 
-     reader.close();
+        reader.close();
+
+
+        for(Map.Entry<Integer,Order> entry : orderListHash.entrySet()) {
+            int orderID = entry.getKey();
+            int custoID = entry.getValue().getCustoID();
+
+            if(OrderList.size()<=custoID){
+                //not exist, create a new list customer{}
+                ArrayList<Order> temp = new ArrayList<>();
+                temp.add(entry.getValue());
+                OrderList.add(temp);
+            }
+            else{
+                //exist customer, add order to list
+                OrderList.get(custoID).add(entry.getValue());
+
+
+            }
+
+        }
+
+
+
+    }catch (IOException e){
+        throw new IOException("couldn't read file: " + "./order.csv");
+    }
+
  }
 
     public static List<List<Order>> getOrderList() throws IOException {
         //hashmamp<orderID,Order> orderlisthash
-        loadOrder();
-
-
-            for(Map.Entry<Integer,Order> entry : orderListHash.entrySet()) {
-                int orderID = entry.getKey();
-                int custoID = entry.getValue().getCustoID();
-
-                if(OrderList.size()<custoID){
-                    //not exist, create a new list customer{}
-                    ArrayList<Order> temp = new ArrayList<>();
-                    temp.add(entry.getValue());
-                    OrderList.add(temp);
-                }
-                else{
-                    //exist customer, add order to list
-                    OrderList.get(custoID).add(entry.getValue());
-
-
-                }
-
-            }
-
             return OrderList;
     }
 
@@ -218,6 +225,11 @@ public class DataLoader {
 
 
     }
+
+    public static ArrayList<Customer> getCustomerList() {
+        return CustomerList;
+    }
+
     public static void writeCustomersList(ArrayList<Customer> customerList) {
 
         String filePath = "./customer.csv";
@@ -230,6 +242,19 @@ public class DataLoader {
                 throw new CSVReadException("couldn't write to file: " + filePath);
             }
         }
+
+        }
+        public static void writeACustomer(Customer customer){
+            String filePath = "./customer.csv";
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+                CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName());
+                writer.write(customerEntry.toString());
+                writer.newLine();
+            } catch (Exception e) {
+                throw new CSVReadException("couldn't write to file: " + filePath);
+            }
+
 
         }
 
