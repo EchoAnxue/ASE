@@ -7,11 +7,11 @@ import java.util.List;
  * @author <Suntanqing FU> <sf4009@hw.ac.uk>
  * @version 0.03
  * @since 2025-02-12
- * 
+ *
  * ****Attributes****:
  * @orderList: a List to store the order list of each customer
  * @customerOrderCount: a List to store the order count of each customer
- * 
+ *
  * ****Methods****:
  * @addOrder(Order order): This method is used to add an order to the order list, update the customer order count.
  * @removeOrder(int orderID): This method is used to remove an order from the order list, update the customer order count.
@@ -29,12 +29,12 @@ public class OrderManager {
     private List<List<Order>> orderList;
     // index is CustomerID, int is order count
     private List<Integer> customerOrderCount;
-    
+
     public OrderManager() {
         this.orderList = new ArrayList<List<Order>>();
         this.customerOrderCount = new ArrayList<Integer>();
     }
-    
+
     // This method is added to add an order to the order list, update the customer order count and update the report
     public void addOrder(Order order) throws NotFoundException, AlreadyExistException {
         int custoID = order.getCustoID();
@@ -47,7 +47,7 @@ public class OrderManager {
             throw new NotFoundException("Customer ID "+order.getCustoID());
         }
     }
-    
+
     // This method is added to remove an order from the order list, update the customer order count and update the report
     public void removeOrder(int orderID) throws NotFoundException {
         for (int custoID = 0; custoID < orderList.size(); custoID++) { // custoID = index
@@ -82,9 +82,9 @@ public class OrderManager {
 
     // This method is added to get the customer by using the order
     public Customer getCustomerByOrder(int orderID) {
-        for (List<Order> orders : orderList) 
-            for (Order order : orders) 
-                if (order.getID() == orderID) 
+        for (List<Order> orders : orderList)
+            for (Order order : orders)
+                if (order.getID() == orderID)
                     return CustomerList.getCustomerByID(order.getCustoID());
         return null;
     }
@@ -125,11 +125,11 @@ public class OrderManager {
 
 
     // This method is added to print the list of all customers
-    public void printCustomers() {    
+    public void printCustomers() {
         System.out.println("Customers: ");
         for (Customer custo : CustomerList.getCustoList())
             System.out.println(custo.toString() + "Order(s) = " + customerOrderCount.get(custo.getID()) + " orders");
-        
+
     }
 
 }

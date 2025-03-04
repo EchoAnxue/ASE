@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,13 +81,16 @@ public class CustomerList {
         return custoList;
     }
 
-    public static void saveToFile(String fileName) {
+    public static void saveToFile(String fileName) throws IOException {
         // TODO: implement save to file
+        DataLoader.loadCustomersList();
 
     }
 
     public static void loadFromFile(String fileName) {
         // TODO: implement load from file
+
+            DataLoader.loadCustomersList();
 
     }
 

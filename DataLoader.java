@@ -12,6 +12,7 @@ public class DataLoader {
 
     private static HashMap<Integer,Order> orderListHash = new HashMap<>();
     private static List<List<Order>> OrderList = new ArrayList<>();
+    private static ArrayList<Customer> CustomerList = new ArrayList<>();
 
         public static void loadMenuItemsFromCSV(String filePath) throws IOException {
 
@@ -56,7 +57,7 @@ public class DataLoader {
         }
         return StorageList;
     }
-    // TODO loadproducts() and loadOrder()
+    //  loadproducts() and loadOrder()
 // i would like to delete loadproducts(),casue it seems that we don't need to think about the storage
 //    quantity
     public static void writeOrder(Order order) throws IOException {
@@ -102,7 +103,10 @@ public class DataLoader {
          if (line.trim().isEmpty()) {
              break; // 跳过空行
          }
-
+         if(!countComma(line,10)) {
+             System.out.println("line: " + line + " has wrong format, should have 10 fields");
+             throw new CSVReadException("line: " + line + " has wrong format, should have 10 fields");
+         }
          String[] fields = line.split(",");
 //         String orderID, String CustomerID, String Time, String itemID,
 //                 String itemName, int quantity,boolean payment,float prize,boolean isRegularCustomer,
@@ -128,7 +132,7 @@ public class DataLoader {
              itemsOrdered.put(StorageList.get(itemIdentifier), quantity);
              orderListHash.put(orderID,new Order(orderID,itemsOrdered,custoID,orderTime
              ,payment,prize,isRegular,totalDiscount,originalPrice));
-             System.out.println("1");
+
          }
          else {
              //exist order, add item to order
@@ -136,7 +140,7 @@ public class DataLoader {
                  throw new CSVReadException("no this item in storage, maybe some mistakes");
              }
              orderListHash.get(orderID).addItem(StorageList.get(itemIdentifier),quantity);
-             System.out.println("2");
+
          }
 
 
@@ -176,6 +180,68 @@ public class DataLoader {
     public void setOrderList(HashMap<Integer, Order> orderList) {
         orderList = orderList;
     }
+//
+    public static ArrayList<Customer> loadCustomersList()  {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("./customer.csv"));
+            String line;
+
+            // Skip header if present
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break; // 跳过空行
+                }
+                if(!countComma(line,1)) {
+                    System.out.println("line: " + line + " has wrong format, should have 1 fields");
+                    throw new CSVReadException("line: " + line + " has wrong format, should have 1 fields");
+                }
+
+                String[] fields = line.split(",");
+
+                int custoID = Integer.parseInt(fields[0]);
+                String name = fields[1];
+
+
+                Customer customer = new Customer(custoID, name);
+                CustomerList.add(customer);
+            }
+
+            reader.close();
+
+        } catch (Exception e) {
+            throw new CSVReadException("couldn't read file: " + "./customer.csv");
+        }
+        return CustomerList;
+
+
+
+    }
+    public static void writeCustomersList(ArrayList<Customer> customerList) {
+
+        String filePath = "./customer.csv";
+        for(Customer customer : customerList) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+                CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName());
+                writer.write(customerEntry.toString());
+                writer.newLine();
+            } catch (Exception e) {
+                throw new CSVReadException("couldn't write to file: " + filePath);
+            }
+        }
+
+        }
+
+
+
+    private static boolean countComma(String str, int n) {
+
+            String line = str.trim();
+        return line.length() - line.replace(",", "").length()==n;
+    }
+
+
 }
 class OrderEntry {
     private String orderID;
@@ -215,4 +281,16 @@ class OrderEntry {
         return entry;
     }
 
+}
+
+class CustomerEntry {
+    private int CustomerID;
+    private String name;
+        public CustomerEntry(int CustomerID, String name) {
+        this.CustomerID = CustomerID;
+        this.name = name;
+    }
+    public String toString() {
+        return this.CustomerID + "," + this.name;
+    }
 }

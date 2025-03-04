@@ -2,6 +2,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,8 +22,8 @@ public class DataLoaderTest {
                 3.4f,"FOOD4","no");
         order.addItem(menuItem,2);
 
-        DataLoader dataLoader = new DataLoader();
-        dataLoader.writeOrder(order);
+
+        DataLoader.writeOrder(order);
     }
     @Test
     public void TestreadOrder() throws IOException {
@@ -35,8 +36,23 @@ public class DataLoaderTest {
     }
     @Test
     public void TestLoadMenu() throws IOException {
-        DataLoader dataLoader = new DataLoader();
 
-        System.out.println(dataLoader.loadMenu());
+        System.out.println(DataLoader.loadMenu());
     }
+
+    @Test
+    public void TestLoadCustomers() throws IOException {
+
+
+        System.out.println(DataLoader.loadCustomersList());
+    }
+
+    @Test
+    public void TestWriteCustomers() throws IOException {
+
+        ArrayList<Customer> customerList = new ArrayList<>();
+        customerList.add(new Customer(1,"anxue"));
+        customerList.add(new Customer(2,"liuzhen"));
+        DataLoader.writeCustomersList(customerList);
+        }
 }
