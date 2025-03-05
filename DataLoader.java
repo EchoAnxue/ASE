@@ -14,7 +14,7 @@ public class DataLoader {
     private static List<List<Order>> OrderList = new ArrayList<>();
     private static ArrayList<Customer> CustomerList = new ArrayList<>();
 
-        public static void loadMenuItemsFromCSV(String filePath) throws IOException {
+        public static void loadMenuItemsFromCSV(String filePath) throws IOException, GenerateException {
 
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
@@ -63,7 +63,7 @@ public class DataLoader {
     //  loadproducts() and loadOrder()
 // i would like to delete loadproducts(),casue it seems that we don't need to think about the storage
 //    quantity
-    public static void writeOrder(Order order) throws CSVReadException {
+    public static void writeOrder(@org.jetbrains.annotations.NotNull Order order) throws CSVReadException {
             String orderID = String.valueOf(order.getID());
             String custoID = String.valueOf(order.getCustoID());
             boolean payment = order.getPaymentStatus();

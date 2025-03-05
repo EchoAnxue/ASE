@@ -14,7 +14,7 @@ public class DataLoaderTest {
 //    }
 
     @Test
-    public void TestwriteOrder() throws IOException {
+    public void TestwriteOrder() throws IOException, GenerateException {
         Customer customer = new Customer(1,"anxue");
 
         Order order = new Order(2,customer);
