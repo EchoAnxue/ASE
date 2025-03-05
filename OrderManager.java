@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -159,7 +158,7 @@ public class OrderManager {
             System.out.println("Customer "+custoID+" already exist.");
         } else {
             orderList.add(new ArrayList<Order>());
-            customerOrderCount.add(1);
+            customerOrderCount.add(0);     //modified from 1 to 0, cuz to initialize an order list of a customer, it should be start from 0
             System.out.println("Customer "+custoID+" is added.");
         }
     }
@@ -208,8 +207,10 @@ public class OrderManager {
     }
 
     // This method is added to get the order count of a customer by using the customer ID
-    public int getOrderCount(int custoID) {
-        return customerOrderCount.get(custoID);
+    public int getOrderCount(int custoID) throws IndexOutOfBoundsException {
+        if(custoID >= customerOrderCount.size())
+            throw new IndexOutOfBoundsException("Customer ID invalid");
+        else return customerOrderCount.get(custoID);
     }
 
 

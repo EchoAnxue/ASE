@@ -82,13 +82,13 @@ public class CustomerList {
     }
 
     public static void saveToFile(String fileName) throws IOException {
-        // TODO: implement save to file
+        //implement save to file
         DataLoader.loadCustomersList();
 
     }
 
     public static void loadFromFile(String fileName) {
-        // TODO: implement load from file
+        //implement load from file
 
             DataLoader.loadCustomersList();
 
