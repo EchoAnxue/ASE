@@ -15,21 +15,16 @@ class OrderManagerTest {
 
     @BeforeEach
     void setUp() throws GenerateException {
-        // 初始化 OrderManager
         orderManager = new OrderManager();
 
-        // 创建测试顾客
         int customerID = orderManager.incrementCustomerId();
         testCustomer = new Customer(customerID, "John Wick");
 
-        // 创建测试菜单项
         menuItem = new MenuItem("Burger", "food", 5.99f, "FOD1905", "description");
 
-        // 创建测试订单的商品列表
         Map<MenuItem, Integer> itemsOrdered = new HashMap<>();
         itemsOrdered.put(menuItem, 2);  // 订单包含 2 份 Burger
 
-        // 创建测试订单
         int orderID = orderManager.incrementOrderId();
         testOrder = new Order(orderID, itemsOrdered, customerID,
                 "12:30 PM", false, 11.98f,
@@ -52,13 +47,13 @@ class OrderManagerTest {
         orderManager.addCustomer(testCustomer.getID());
         orderManager.addOrder(testOrder);
 
-        // 确保订单存在
+        // make sure order exist
         assertNotNull(orderManager.getOrderByOrderID(testOrder.getID()));
 
-        // 移除订单
+        // remove order
         orderManager.removeOrder(testOrder.getID());
 
-        // 确保订单被移除
+        // make sure order removed
         assertNull(orderManager.getOrderByOrderID(testOrder.getID()));
     }
 
@@ -66,7 +61,7 @@ class OrderManagerTest {
     void testAddCustomer() {
         orderManager.addCustomer(testCustomer.getID());
 
-        // 确保顾客 ID 相关的订单列表已创建
+        // make sure customer added
         assertDoesNotThrow(() -> orderManager.getOrderByCusto(testCustomer.getID()));
     }
 

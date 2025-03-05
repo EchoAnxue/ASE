@@ -151,9 +151,12 @@ public class Order {
             }
         }
 
+        // After applying item-based discounts, apply the regular customer discount if applicable
         if (isRegularCustomer) {
-            totalDiscount = originalPrice - (originalPrice - totalDiscount) * 0.95f;
+            float discountForRegularCustomer = (originalPrice - totalDiscount) * 0.05f;
+            totalDiscount += discountForRegularCustomer;
         }
+
         prize = originalPrice - totalDiscount;
     }
 

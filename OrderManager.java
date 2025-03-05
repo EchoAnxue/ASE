@@ -113,14 +113,14 @@ public class OrderManager {
     // This method is added to add an order to the order list, update the customer order count and update the report
     public void addOrder(Order order)   {
         int custoID = order.getCustoID();
-//        TODO: 这里是假设存在该顾客
+//        if customer exist
         if (orderList.size() > custoID && custoID >= 0) {
             if(getOrderCount(custoID) > 7)
                 order.setRegularCustomer(true);
             orderList.get(custoID).add(order);
             customerOrderCount.set(custoID, customerOrderCount.get(custoID) + 1);
         }
-//        TODO: 这里是假设不存在该顾客，需要添加顾客
+//        if customer not exist, add a new customer
         else if (orderList.size() <= custoID) {
 //           update customerCount,
             addCustomer(custoID);

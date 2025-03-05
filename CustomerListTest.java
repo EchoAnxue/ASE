@@ -15,7 +15,6 @@ public class CustomerListTest {
 
     @Test
     public void testAddCustomerByName() throws AlreadyExistException {
-        // Test adding a customer by name
         customerList.addCustomerByName("John Wick");
         List<Customer> customers = customerList.getCustoList();
         assertEquals(1, customers.size());
@@ -50,7 +49,6 @@ public class CustomerListTest {
 
     @Test
     public void testGetCustomerByID() throws AlreadyExistException {
-        // Test retrieving a customer by ID
         customerList.addCustomerByName("John Wick");
         Customer customer = customerList.getCustomerByID(0);
         assertNotNull(customer);
@@ -59,7 +57,6 @@ public class CustomerListTest {
 
     @Test
     public void testGetCustoList() throws AlreadyExistException {
-        // Test getting the list of customers
         customerList.addCustomerByName("John Wick");
         customerList.addCustomerByName("John Smith");
 

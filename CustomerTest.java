@@ -13,13 +13,11 @@ public class CustomerTest {
 
     @Test
     public void testGetID() {
-        // Test the getID() method
         assertEquals(1, customer.getID());
     }
 
     @Test
     public void testToString() {
-        // Test the toString() method
         String expected = "id= 1 , name= John Wick ";
         assertEquals(expected, customer.toString());
     }
