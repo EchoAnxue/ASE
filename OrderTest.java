@@ -54,4 +54,5 @@ class OrderTest {
         order.setRegularCustomer(true);
         assertTrue(order.isRegularCustomer());
     }
+
 }

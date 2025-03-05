@@ -31,6 +31,11 @@ public class OrderManager {
     // index is CustomerID, int is order count
     private List<Integer> customerOrderCount;
     private ArrayList<Customer> cusotmerList;
+
+    public int getCurrentCustomerId() {
+        return currentCustomerId;
+    }
+
     private int currentCustomerId;
     private int currentOrderId;
     public OrderManager() {
@@ -45,9 +50,11 @@ public class OrderManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
         this.customerOrderCount = new ArrayList<Integer>();
+        for(int i=0;i<cusotmerList.size();i++) {
+            customerOrderCount.add(cusotmerList.get(i).getOrderCount());
+        }
+
         // 假设 orderList 已填充数据
 
         int maxOrderID = -1;

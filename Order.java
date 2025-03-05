@@ -181,7 +181,7 @@ public class Order {
     }
 
     public float getPrize() {
-        calculatePrize();
+
         return prize;
     }
 

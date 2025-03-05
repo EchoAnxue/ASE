@@ -42,7 +42,8 @@ public class ShopGUI {
 
         shopList = DataLoader.loadMenu();
         orderManager = new OrderManager();
-        currentCustomerId = orderManager.incrementCustomerId();
+        currentCustomerId = orderManager.getCurrentCustomerId();
+//        currentCustomerId = orderManager.incrementCustomerId();
         currentOrderId = orderManager.incrementOrderId();
 
 
@@ -224,21 +225,34 @@ public class ShopGUI {
         for (MenuItem item : billList.keySet()) {
             Bill.append(item.getName()).append(" x ").append(billList.get(item)).append("\n");
         }
-        DataLoader.writeACustomer(new Customer(currentCustomerId, customerName));
-        Order order = new Order(currentOrderId, billList,currentCustomerId, LocalDateTime.now().toString(),
-                false, 0.0F,false,0, 0);
-        order.getPrize();
+        int  isNewCustomer = DataLoader.writeACustomer(new Customer(currentCustomerId, customerName,1));
+        Order order;
+        if (isNewCustomer==-1) {
+//            new customer
+            currentCustomerId = orderManager.incrementCustomerId();
+             order = new Order(currentOrderId, billList, currentCustomerId, LocalDateTime.now().toString(),
+                    false, 0.0F, false, 0, 0);
+        }
+        else{
+            boolean isRegular = orderManager.getOrderCount(isNewCustomer)>7;
+             order = new Order(currentOrderId, billList, isNewCustomer, LocalDateTime.now().toString(),
+                    false, 0.0F, isRegular, 0, 0);
+        }
+
+
+        order.getTotalDiscount();
 //        TODO: write to file
         orderManager.addOrder(order);
         DataLoader.writeOrder(order);
+
 //
 
         Bill.append("------------------------\n");
 
         Bill.append("customer name: ").append(customerName).append("\n");
+// don't use  get total discount twice, it will refresh the discount value ,so use order.getOriginalPrice() - order.getPrize()
+        Bill.append("total discount: $").append(String.format("%.2f", order.getOriginalPrice() - order.getPrize())).append("\n");
         Bill.append("total price: $").append(String.format("%.2f", order.getPrize())).append("\n");
-        Bill.append("total discount: $").append(String.format("%.2f", order.getTotalDiscount())).append("\n");
-
         orderBill.setText(Bill.toString());
     }
 
@@ -281,7 +295,7 @@ public class ShopGUI {
                     }
                 }
                 totalIncome += order.getPrize();
-                totalDiscount += order.getTotalDiscount();
+                totalDiscount += order.getOriginalPrice()-order.getPrize();
             }
         }
         summary.append("total income: $").append(String.format("%.2f", totalIncome)).append("\n");

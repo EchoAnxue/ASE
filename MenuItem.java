@@ -16,13 +16,12 @@ public class MenuItem {
 
     private static final String[] ALLOWED_CATEGORIES = {"beverage", "food", "dessert"};
 
-    public MenuItem(String name,String category,float cost,String identifier,String description) throws GenerateException {
+    public MenuItem(String name,String category,float cost,String identifier,String description){
         try {
             validateMenuItem(name, category, cost, identifier, description);
         } catch (GenerateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            throw e;
         }
         this.name = name;
         this.category = category;

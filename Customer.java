@@ -26,11 +26,26 @@
 public class Customer {
     private int custoID;
     private String name;
-    
+    private int orderCount;
+
+    public int getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
+    }
+
     // Constructor
-    public Customer(int custoID, String name) {
+//    public Customer(int custoID, String name) {
+//        this.custoID = custoID;
+//        this.name = name;
+//    }
+
+    public Customer(int custoID, String name, int orderCount) {
         this.custoID = custoID;
         this.name = name;
+        this.orderCount = orderCount;
     }
 
     // Get ID of customer
