@@ -127,6 +127,7 @@ public class OrderManager {
             addCustomer(custoID);
 
             orderList.get(custoID).add(order);
+            System.out.println(orderList);
 //            customerOrderCount.set(custoID, customerOrderCount.get(custoID) + 1);
             }
 
@@ -158,7 +159,7 @@ public class OrderManager {
             System.out.println("Customer "+custoID+" already exist.");
         } else {
             orderList.add(new ArrayList<Order>());
-            customerOrderCount.add(0);
+            customerOrderCount.add(1);
             System.out.println("Customer "+custoID+" is added.");
         }
     }

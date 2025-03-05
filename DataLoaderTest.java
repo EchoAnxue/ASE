@@ -55,4 +55,15 @@ public class DataLoaderTest {
         customerList.add(new Customer(2,"liuzhen"));
         DataLoader.writeCustomersList(customerList);
         }
+        @Test
+//
+        public void TestWriteACustomer() throws IOException {
+        DataLoader.loadCustomersList();
+        ArrayList<Customer> customerList = new ArrayList<>();
+
+        customerList.add(new Customer(0,"Li hong"));
+
+        DataLoader.writeACustomer(customerList.get(0));
+        }
+
 }

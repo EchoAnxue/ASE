@@ -23,14 +23,17 @@ public class DataLoader {
         reader.readLine();
 
         while ((line = reader.readLine()) != null) {
-            if (line.trim().isEmpty()) {
+            if (line.trim().isEmpty()||line.contains("\t")) {
                 break; // 跳过空行
             }
-
+            if(!countComma(line,4)) {
+                System.out.println("line: " + line + " has wrong format, should have 4 fields");
+                throw new CSVReadException("line: " + line + " has wrong format, should have 10 fields");
+            }
             String[] fields = line.replace("\"","").split(",");
 
             String name = fields[0];
-            String category = fields[1];
+            String category = fields[1].toLowerCase();
             float cost = Float.parseFloat(fields[2]);
             String ID = fields[3];
             String description = fields[4];
@@ -249,9 +252,16 @@ public class DataLoader {
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
                 CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName());
-                writer.write(customerEntry.toString());
-                writer.newLine();
+                if (CustomerList.get(customer.getID())==null) {
+                    writer.write(customerEntry.toString());
+                    writer.newLine();
+                }
+                else {
+                    System.out.println("customer already exist");
+                }
+
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new CSVReadException("couldn't write to file: " + filePath);
             }
 

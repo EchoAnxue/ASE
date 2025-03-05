@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -137,14 +138,16 @@ public class Order {
         originalPrice = calculateTotalPrice();
 
         for (Map.Entry<MenuItem, Integer> entry : itemsOrdered.entrySet()) {
-            if (entry.getKey().getCategory().equals("BEVERAGE")) {
+            if (entry.getKey().getCategory().toLowerCase().equals("beverage")) {
                 if (entry.getValue() > 1) {
                     totalDiscount += entry.getValue() / 2 * 0.40 * entry.getKey().getCost();
+                    System.out.println("Half off for beverages with more than 1 item"+totalDiscount);
                 }
             }
-            if (entry.getKey().getCategory().equals("FOOD")) {
+            if (entry.getKey().getCategory().equals("food")) {
                 if (entry.getValue() > 2) {
                     totalDiscount += entry.getValue() / 3 * 0.50 * entry.getKey().getCost();
+                    System.out.println("Half off for food with more than 2 item"+totalDiscount);
                 }
             }
         }
@@ -176,6 +179,7 @@ public class Order {
     }
 
     public float getPrize() {
+        calculatePrize();
         return prize;
     }
 
@@ -191,10 +195,13 @@ public class Order {
     }
 
     public float getTotalDiscount() {
+//        add function otherwise it will return 0
+        this.calculatePrize();
         return totalDiscount;
     }
 
     public float getOriginalPrice() {
+        calculateTotalPrice();
         return originalPrice;
     }
 }

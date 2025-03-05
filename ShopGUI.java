@@ -26,34 +26,9 @@ public class ShopGUI {
     private JButton confirmNameButton;
     private JTextArea summaryText;
     private OrderManager orderManager;
+    private JTextField customerHintField;
 
-//
-//    public synchronized int  incrementCustomerId() {
-//        System.out.println("Before Inc " + currentCustomerId);
-//        currentCustomerId++;
-//        System.out.println("After Inc " + currentCustomerId);
-//        return currentCustomerId;
-//    }
-//
-//    public synchronized int decrementCurrentCustomerId() {
-//        System.out.println("\\t\\t\\t Before Dec " + currentCustomerId);
-//        currentCustomerId--;
-//        System.out.println("\\t\\t\\t After Dec " + currentCustomerId);
-//        return currentCustomerId;
-//    }
-//    public synchronized int incrementOrderId() {
-//        System.out.println("\\t\\t\\t\\t Before Inc " + currentOrderId);
-//        currentOrderId++;
-//        System.out.println("\\t\\t\\t\\t After Inc " + currentOrderId);
-//        return currentOrderId;
-//    }
-//
-//    public synchronized int decrementCurrentOrderId() {
-//        System.out.println("\\t\\t\\t\\t\\t Before Dec " + currentOrderId);
-//        currentOrderId--;
-//        System.out.println("\\t\\t\\t\\t\\t After Dec " + currentOrderId);
-//        return currentOrderId;
-//    }
+
     public ShopGUI()   {
         frame = new JFrame("ASECoffee Shop ~ Welcome to our shop");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,10 +46,10 @@ public class ShopGUI {
         currentOrderId = orderManager.incrementOrderId();
 
 
-        mainPanel.add(createMenuPanel(), "Menu");
+        mainPanel.add(new BackgroundPanel("menu.png", createMenuPanel()), "Menu");
         mainPanel.add(createOrderPanel(), "Order");
-        mainPanel.add(createBillPanel(), "Bill");
-        mainPanel.add(createSummaryPanel(), "Summary");
+        mainPanel.add(new BackgroundPanel("back.png",createBillPanel()), "Bill");
+        mainPanel.add(new BackgroundPanel("back.png",createSummaryPanel()), "Summary");
 
 
         frame.add(mainPanel);
@@ -83,11 +58,13 @@ public class ShopGUI {
 
     private JPanel createMenuPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        JTextArea menuText = new JTextArea("Menu:\n");
+        panel.setOpaque(false); // 让背景可见
+        JTextArea menuText = new JTextArea("\n\n\t\tMenu:\n");
         for (MenuItem item : shopList.values()) {
-            menuText.append(item.getName() + " - price:" + item.getCost() + "\n");
+            menuText.append("\t\t"+item.getName() + " - price:" + item.getCost() + "\n");
         }
         menuText.setEditable(false);
+        menuText.setOpaque(false);
         panel.add(menuText, BorderLayout.CENTER);
 
         JButton nextButton = new JButton("GO TO ORDER");
@@ -98,20 +75,34 @@ public class ShopGUI {
     }
 
     private JPanel createOrderPanel() {
-        JPanel panel = new JPanel(new GridLayout(shopList.size() + 3, 1));
+
+
+        JPanel ALLPanel = new JPanel();
+        ALLPanel.setOpaque(false); // 让背景可见
+        ALLPanel.setLayout(new BoxLayout(ALLPanel, BoxLayout.Y_AXIS));
+
+
+        JPanel flowPanel =  new JPanel(new GridLayout(shopList.size(), 1));
+        JPanel backPanel =  new BackgroundPanel("menu.png",flowPanel);
+        flowPanel.setOpaque(false);
+//        flowPanel.setBackground(Color.pink);
 
         JPanel namePanel = new JPanel(new BorderLayout());
-        customerNameField = new JTextField("please input your name");
-        confirmNameButton = new JButton("确认");
+        namePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        customerHintField = new JTextField("please input your name");
+        customerNameField = new JTextField();
+        confirmNameButton = new JButton("√ CONFIRM");
         confirmNameButton.addActionListener(e -> toggleItemButtons());
+        namePanel.add(customerHintField, BorderLayout.WEST);
         namePanel.add(customerNameField, BorderLayout.CENTER);
         namePanel.add(confirmNameButton, BorderLayout.EAST);
-        panel.add(namePanel);
+        ALLPanel.add(namePanel);
 
         for (MenuItem item : shopList.values()) {
             JPanel itemPanel = new JPanel(new FlowLayout());
 //            display
             JTextField quantityField = new JTextField("0", 3);
+            quantityField.setOpaque(false);
             quantityField.setEnabled(false);
 //            hash map add item and quantity field
 //            quantityFields.put(item.getIdentifier(), quantityField);
@@ -128,34 +119,31 @@ public class ShopGUI {
             itemButtons.add(button);
             itemPanel.add(quantityField);
             itemPanel.add(button);
+            itemPanel.setOpaque(false);
 //            - item + amount
+            flowPanel.add(itemPanel);
 
-            panel.add(itemPanel);
+
         }
 
+    JScrollPane scrollPane = new JScrollPane(backPanel);
+    scrollPane.setOpaque(false);
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-//
-//            JButton button = new JButton(item.name + " ($" + item.price + ")");
-//            button.addActionListener(e -> addToOrder(item, quantityField));
-//            button.setEnabled(false);
-//            itemButtons.add(button);
-//
-
-//
-//            panel.add(itemPanel);
-        JButton checkoutButton = new JButton("查看订单");
+    ALLPanel.add(scrollPane);
+    JButton checkoutButton = new JButton("CKECK YOUR ORDER");
         checkoutButton.addActionListener(e -> {
             customerName = customerNameField.getText().trim();
             if (customerName.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "请先输入您的姓名！");
+                JOptionPane.showMessageDialog(frame, "input your name before order!");
             } else {
                 updateBill();
                 cardLayout.show(mainPanel, "Bill");
             }
         });
-        panel.add(checkoutButton);
+        ALLPanel.add(checkoutButton);
 
-        return panel;
+        return ALLPanel;
     }
 
     private void addToOrder(MenuItem item, JTextField quantityField) {
@@ -201,16 +189,29 @@ public class ShopGUI {
         for (JButton button : itemButtons) {
             button.setEnabled(enable);
         }
-        customerNameField.setEditable(false);
+        if(enable) {
+            customerNameField.setEditable(false);
+        }
+        else {
+            customerNameField.setEditable(true);
+        }
+
     }
     private JPanel createBillPanel() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false); // 让背景可见
         orderBill = new JTextArea();
         orderBill.setEditable(false);
-        panel.add(new JScrollPane(orderBill), BorderLayout.CENTER);
+        orderBill.setOpaque(false);
+
+        panel.add(orderBill, BorderLayout.CENTER);
 
         JButton backButton = new JButton("See Summary");
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Summary"));
+        backButton.addActionListener(e -> {
+            displaySummary();
+            cardLayout.show(mainPanel, "Summary");
+
+        });
         panel.add(backButton, BorderLayout.SOUTH);
 
         return panel;
@@ -219,21 +220,25 @@ public class ShopGUI {
 
 
     private void updateBill() {
-        StringBuilder Bill = new StringBuilder("订单摘要:\n");
+        StringBuilder Bill = new StringBuilder("bill receipt:\n");
         for (MenuItem item : billList.keySet()) {
             Bill.append(item.getName()).append(" x ").append(billList.get(item)).append("\n");
         }
         DataLoader.writeACustomer(new Customer(currentCustomerId, customerName));
         Order order = new Order(currentOrderId, billList,currentCustomerId, LocalDateTime.now().toString(),
                 false, 0.0F,false,0, 0);
-        order.calculatePrize();
+        order.getPrize();
 //        TODO: write to file
+        orderManager.addOrder(order);
         DataLoader.writeOrder(order);
 //
-        orderManager.addOrder(order);
 
+        Bill.append("------------------------\n");
 
-        Bill.append("总价: $").append(String.format("%.2f", order.getPrize())).append("\n");
+        Bill.append("customer name: ").append(customerName).append("\n");
+        Bill.append("total price: $").append(String.format("%.2f", order.getPrize())).append("\n");
+        Bill.append("total discount: $").append(String.format("%.2f", order.getTotalDiscount())).append("\n");
+
         orderBill.setText(Bill.toString());
     }
 
@@ -242,8 +247,10 @@ public class ShopGUI {
         JPanel panel = new JPanel(new BorderLayout());
         summaryText = new JTextArea("Summary:\n");
         summaryText.setEditable(false);
-        displaySummary();
-//        TODO: display summary
+        summaryText.setOpaque(false);
+
+
+
 
         panel.add(summaryText, BorderLayout.CENTER);
 
@@ -258,8 +265,9 @@ public class ShopGUI {
 //        所有菜品订购次数
 //        订单总收入
         float totalIncome = 0;
+        float totalDiscount = 0;
         HashMap<MenuItem, Integer> itemCount = new HashMap<>();
-        StringBuilder summary = new StringBuilder("订单摘要:\n");
+        StringBuilder summary = new StringBuilder("ALL ORDERS SUMMARY:\n");
 
         for(List<Order> orders : orderManager.getAllOrder()) {
             for(Order order : orders) {
@@ -273,9 +281,11 @@ public class ShopGUI {
                     }
                 }
                 totalIncome += order.getPrize();
+                totalDiscount += order.getTotalDiscount();
             }
         }
         summary.append("total income: $").append(String.format("%.2f", totalIncome)).append("\n");
+        summary.append("total discount: $").append(String.format("%.2f", totalDiscount)).append("\n");
         for(MenuItem item : shopList.values()) {
             if(!itemCount.containsKey(item)) {
                 itemCount.put(item, 0);
@@ -299,5 +309,30 @@ public class ShopGUI {
 
         SwingUtilities.invokeLater(ShopGUI::new);
 
+    }
+}
+
+class BackgroundPanel extends JPanel {
+    private Image backgroundImage;
+
+    public BackgroundPanel(String imagePath, JPanel contentPanel) {
+        backgroundImage = new ImageIcon(imagePath).getImage();
+        setLayout(new GridLayout());
+        contentPanel.setOpaque(false); // 让内容透明，显示背景
+        add(contentPanel, BorderLayout.CENTER);
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+//        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        if (backgroundImage != null) {
+            Graphics2D g2d = (Graphics2D) g.create(); // 创建 Graphics2D 对象，避免影响其他绘图
+            float alpha = 0.3f; // 设置透明度（0.0 = 完全透明，1.0 = 不透明）
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            g2d.dispose(); // 释放资源
+        }
     }
 }
