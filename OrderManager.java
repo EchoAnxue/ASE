@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -121,14 +120,14 @@ public class OrderManager {
     // This method is added to add an order to the order list, update the customer order count and update the report
     public void addOrder(Order order)   {
         int custoID = order.getCustoID();
-//        TODO: 这里是假设存在该顾客
+//        if customer exist
         if (orderList.size() > custoID && custoID >= 0) {
             if(getOrderCount(custoID) > 7)
                 order.setRegularCustomer(true);
             orderList.get(custoID).add(order);
             customerOrderCount.set(custoID, customerOrderCount.get(custoID) + 1);
         }
-//        TODO: 这里是假设不存在该顾客，需要添加顾客
+//        if customer not exist, add a new customer
         else if (orderList.size() <= custoID) {
 //           update customerCount,
             addCustomer(custoID);
@@ -166,7 +165,7 @@ public class OrderManager {
             System.out.println("Customer "+custoID+" already exist.");
         } else {
             orderList.add(new ArrayList<Order>());
-            customerOrderCount.add(1);
+            customerOrderCount.add(0);     //modified from 1 to 0, cuz to initialize an order list of a customer, it should be start from 0
             System.out.println("Customer "+custoID+" is added.");
         }
     }
@@ -215,8 +214,10 @@ public class OrderManager {
     }
 
     // This method is added to get the order count of a customer by using the customer ID
-    public int getOrderCount(int custoID) {
-        return customerOrderCount.get(custoID);
+    public int getOrderCount(int custoID) throws IndexOutOfBoundsException {
+        if(custoID >= customerOrderCount.size())
+            throw new IndexOutOfBoundsException("Customer ID invalid");
+        else return customerOrderCount.get(custoID);
     }
 
 
