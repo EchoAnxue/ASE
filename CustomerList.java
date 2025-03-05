@@ -46,7 +46,7 @@ public class CustomerList {
                 throw new AlreadyExistException("Customer " + name);
         }
         int custoID = custoList.size();
-        Customer custo = new Customer(custoID, name);
+        Customer custo = new Customer(custoID, name,1);
         custoList.add(custo);
     }   
 

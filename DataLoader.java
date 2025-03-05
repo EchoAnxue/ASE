@@ -14,7 +14,7 @@ public class DataLoader {
     private static List<List<Order>> OrderList = new ArrayList<>();
     private static ArrayList<Customer> CustomerList = new ArrayList<>();
 
-        public static void loadMenuItemsFromCSV(String filePath) throws IOException, GenerateException {
+        public static void loadMenuItemsFromCSV(String filePath) throws IOException {
 
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
@@ -63,7 +63,7 @@ public class DataLoader {
     //  loadproducts() and loadOrder()
 // i would like to delete loadproducts(),casue it seems that we don't need to think about the storage
 //    quantity
-    public static void writeOrder(@org.jetbrains.annotations.NotNull Order order) throws CSVReadException {
+    public static void writeOrder(Order order) throws CSVReadException {
             String orderID = String.valueOf(order.getID());
             String custoID = String.valueOf(order.getCustoID());
             boolean payment = order.getPaymentStatus();
@@ -82,7 +82,7 @@ public class DataLoader {
                 MenuItem item = entry.getKey();
                 int quantity = entry.getValue();
                 OrderEntry orderentry = new OrderEntry(orderID, custoID, order.getTime(),
-                        item.getIdentifier(), item.getName(), quantity,payment, order.getPrize(),isRegular, order.getTotalDiscount(), order.getOriginalPrice());
+                        item.getIdentifier(), item.getName(), quantity,payment, order.getPrize(),isRegular, order.getOriginalPrice()- order.getPrize(), order.getOriginalPrice());
                 writer.write(orderentry.toString());
                 writer.newLine();
             }
@@ -203,7 +203,7 @@ public class DataLoader {
                 if (line.trim().isEmpty()) {
                     break; // 跳过空行
                 }
-                if(!countComma(line,1)) {
+                if(!countComma(line,2)) {
                     System.out.println("line: " + line + " has wrong format, should have 1 fields");
                     throw new CSVReadException("line: " + line + " has wrong format, should have 1 fields");
                 }
@@ -212,9 +212,10 @@ public class DataLoader {
 
                 int custoID = Integer.parseInt(fields[0]);
                 String name = fields[1];
+                int orderCount = Integer.parseInt(fields[2]);
 
 
-                Customer customer = new Customer(custoID, name);
+                Customer customer = new Customer(custoID, name, orderCount);
                 CustomerList.add(customer);
             }
 
@@ -236,29 +237,39 @@ public class DataLoader {
     public static void writeCustomersList(ArrayList<Customer> customerList) {
 
         String filePath = "./customer.csv";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
+            writer.write("CustomerID,name,orderCount");
+            writer.newLine();
         for(Customer customer : customerList) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-                CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName());
+
+                CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName(), customer.getOrderCount());
                 writer.write(customerEntry.toString());
                 writer.newLine();
-            } catch (Exception e) {
-                throw new CSVReadException("couldn't write to file: " + filePath);
             }
+        }catch (Exception e) {
+            throw new CSVReadException("couldn't write to file: " + filePath);
         }
 
         }
-        public static void writeACustomer(Customer customer){
+        public static int writeACustomer( Customer customer){
             String filePath = "./customer.csv";
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-                CustomerEntry customerEntry = new CustomerEntry(customer.getID(), customer.getName());
-                if (CustomerList.get(customer.getID())==null) {
+                CustomerEntry customerEntry = new CustomerEntry(customer.getID()+1, customer.getName(),customer.getOrderCount());
+                for (int i = 0; i < CustomerList.size(); i++){
+                    if (CustomerList.get(i).getName().equals(customer.getName())){
+                        System.out.println("customer already exist");
+                        CustomerList.get(i).setOrderCount(CustomerList.get(i).getOrderCount()+1);
+                        DataLoader.writeCustomersList(CustomerList);
+                        return i;
+                    }
+                }
+//                no this customer, add to list
+
                     writer.write(customerEntry.toString());
                     writer.newLine();
-                }
-                else {
-                    System.out.println("customer already exist");
-                }
+
+                return -1;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -321,11 +332,13 @@ class OrderEntry {
 class CustomerEntry {
     private int CustomerID;
     private String name;
-        public CustomerEntry(int CustomerID, String name) {
+    private int orderCount;
+        public CustomerEntry(int CustomerID, String name, int orderCount) {
         this.CustomerID = CustomerID;
         this.name = name;
+        this.orderCount = orderCount;
     }
     public String toString() {
-        return this.CustomerID + "," + this.name;
+        return this.CustomerID + "," + this.name+","+this.orderCount;
     }
 }

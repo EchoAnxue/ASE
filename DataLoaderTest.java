@@ -14,8 +14,8 @@ public class DataLoaderTest {
 //    }
 
     @Test
-    public void TestwriteOrder() throws IOException, GenerateException {
-        Customer customer = new Customer(1,"anxue");
+    public void TestwriteOrder() throws IOException {
+        Customer customer = new Customer(1,"anxue",1);
 
         Order order = new Order(2,customer);
         MenuItem menuItem = new MenuItem("fgfg","beverage",
@@ -51,8 +51,8 @@ public class DataLoaderTest {
     public void TestWriteCustomers() throws IOException {
 
         ArrayList<Customer> customerList = new ArrayList<>();
-        customerList.add(new Customer(1,"anxue"));
-        customerList.add(new Customer(2,"liuzhen"));
+        customerList.add(new Customer(1,"anxue",1));
+        customerList.add(new Customer(2,"liuzhen",1));
         DataLoader.writeCustomersList(customerList);
         }
         @Test
@@ -61,7 +61,7 @@ public class DataLoaderTest {
         DataLoader.loadCustomersList();
         ArrayList<Customer> customerList = new ArrayList<>();
 
-        customerList.add(new Customer(0,"Li hong"));
+        customerList.add(new Customer(0,"Li hong",1));
 
         DataLoader.writeACustomer(customerList.get(0));
         }

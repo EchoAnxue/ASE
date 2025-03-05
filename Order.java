@@ -154,6 +154,7 @@ public class Order {
 
         if (isRegularCustomer) {
             totalDiscount = originalPrice - (originalPrice - totalDiscount) * 0.95f;
+            System.out.println("0.95 off for old customers"+totalDiscount);
         }
         prize = originalPrice - totalDiscount;
     }
@@ -179,7 +180,7 @@ public class Order {
     }
 
     public float getPrize() {
-        calculatePrize();
+
         return prize;
     }
 
