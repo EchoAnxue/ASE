@@ -74,7 +74,7 @@ public class DataLoader {
 
 
 
-        String filePath = "./order.csv";
+        String filePath = "order.csv";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 
@@ -95,7 +95,7 @@ public class DataLoader {
     }
  public static void loadOrder() throws CSVReadException, IOException {
     try {
-        BufferedReader reader = new BufferedReader(new FileReader("./order.csv"));
+        BufferedReader reader = new BufferedReader(new FileReader("order.csv"));
 
 
         String line;
@@ -176,7 +176,7 @@ public class DataLoader {
 
 
     }catch (IOException e){
-        throw new IOException("couldn't read file: " + "./order.csv");
+        throw new IOException("couldn't read file: " + "order.csv");
     }
 
  }
@@ -253,7 +253,7 @@ public class DataLoader {
         }
         public static int writeACustomer( Customer customer){
             String filePath = "./customer.csv";
-
+//            loadCustomersList();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
                 CustomerEntry customerEntry = new CustomerEntry(customer.getID()+1, customer.getName(),customer.getOrderCount());
                 for (int i = 0; i < CustomerList.size(); i++){

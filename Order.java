@@ -155,6 +155,8 @@ public class Order {
         if (isRegularCustomer) {
             float discountForRegularCustomer = (originalPrice - totalDiscount) * 0.05f;
             totalDiscount += discountForRegularCustomer;
+            System.out.println("0.05 off for regular customer");
+
         }
 
         prize = originalPrice - totalDiscount;

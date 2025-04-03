@@ -11,7 +11,7 @@ class OrderTest {
 
     @BeforeEach
     void setUp() throws GenerateException {
-        customer = new Customer(1, "John Wick");
+        customer = new Customer(1, "John Wick",1);
         order = new Order(1001, customer);
         item1 = new MenuItem("Coffee", "beverage", 5.0f, "BEV2132", "description");
         item2 = new MenuItem("Burger", "food", 10.0f, "FOD9371", "description");

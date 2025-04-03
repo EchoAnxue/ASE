@@ -321,6 +321,7 @@ public class ShopGUI {
 
 //        OrderManager orderManager = new OrderManager();
 
+
         SwingUtilities.invokeLater(ShopGUI::new);
 
     }

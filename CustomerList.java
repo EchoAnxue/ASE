@@ -43,7 +43,8 @@ public class CustomerList {
             throw new IllegalArgumentException("Name cannot be null or empty");
         for (Customer custo : custoList) {
             if (custo.getName().equals(name))
-                throw new AlreadyExistException("Customer " + name);
+//                throw new AlreadyExistException("Customer " + name);
+                System.out.println(" AlreadyExistException name");
         }
         int custoID = custoList.size();
         Customer custo = new Customer(custoID, name,1);

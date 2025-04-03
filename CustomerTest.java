@@ -8,7 +8,7 @@ public class CustomerTest {
 
     @BeforeEach
     public void setUp() {
-        customer = new Customer(1, "John Wick");
+        customer = new Customer(1, "John Wick",1);
     }
 
     @Test

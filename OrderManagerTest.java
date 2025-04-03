@@ -18,7 +18,7 @@ class OrderManagerTest {
         orderManager = new OrderManager();
 
         int customerID = orderManager.incrementCustomerId();
-        testCustomer = new Customer(customerID, "John Wick");
+        testCustomer = new Customer(customerID, "John Wick",1);
 
         menuItem = new MenuItem("Burger", "food", 5.99f, "FOD1905", "description");
 
