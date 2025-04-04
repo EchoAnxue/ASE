@@ -14,10 +14,13 @@ public class CafeThreadGUI extends JFrame {
 
 
     private JTextArea queueLabel = new JTextArea("current waiting orders：0");
-    private JLabel[] serverStatus = new JLabel[4];
+    private JTextArea[] serverStatus = new JTextArea[4];
     private JTextArea reportArea = new JTextArea();
     private OrderManager orderManager;
     public CafeThreadGUI() {
+
+        orderManager = new OrderManager();
+        String result = SortOrderListToMap(orderManager.getOrderList());
         setTitle("CafeThreadGUI");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -39,22 +42,34 @@ public class CafeThreadGUI extends JFrame {
 
         JPanel threadPanel = new JPanel(new GridLayout(1,4));
 
-        String[] staffNames = {"Server 1", "Server 2", "Cook 1", "Cook 2"};
+        String[] staffNames = { "Cook 1", "Cook 2","Server 1", "Server 2",};
         for (int i = 0; i < 4; i++) {
-            serverStatus[i] = new JLabel(staffNames[i] + " 状态：空闲");
+            serverStatus[i] = new JTextArea(staffNames[i] + " status: free");
             threadPanel.add(serverStatus[i]);
         }
         statusPanel.add(threadPanel);
 
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
-            orderManager = new OrderManager();
-            String result = SortOrderListToMap(orderManager.getOrderList());
+
 
 
             queueLabel.setText("There are currently "+ GUIOrderManager.getSize() +
                     " people waiting in the queue：" + "\n" + result);
             addCustomerBtn.setVisible(false);
+            String[] staffThreadNames = {"Cook 1", "Cook 2","Server 1", "Server 2", };
+            Object lock = new Object();
+            for (int i = 0; i < 2; i++) {
+                Cook s = new Cook(staffThreadNames[i], serverStatus[i],lock);
+                new Thread(s).start();
+            }
+
+            for (int i = 2; i < 4; i++) {
+                Server s = new Server(staffThreadNames[i], serverStatus[i],orderManager,lock);
+                new Thread(s).start();
+            }
+
+
         });
 
 //        JButton switchToReportBtn = new JButton("see report");
@@ -85,12 +100,8 @@ public class CafeThreadGUI extends JFrame {
 //
         add(cardPanel, BorderLayout.CENTER);
 //
-//        // === 启动服务线程 ===
-//        String[] staffThreadNames = {"Server 1", "Server 2", "Cook 1", "Cook 2"};
-//        for (int i = 0; i < 4; i++) {
-//            Server s = new Server(staffThreadNames[i], queue, reportArea, serverStatus[i]);
-//            new Thread(s).start();
-//        }
+        // === 启动服务线程 ===
+
 
         setVisible(true);
     }
@@ -104,6 +115,8 @@ public class CafeThreadGUI extends JFrame {
 
             for (Order order: sorted){
                 GUIOrderManager.addOrder(order);
+                CookOrderManager.addOrder(order);
+
             }
 
         StringBuilder sb = new StringBuilder();

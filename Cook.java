@@ -1,23 +1,73 @@
-//public class Cook {
-//    private final List<Order> orderQueue = new ArrayList<>();  // 等待处理的订单
-//    private final List<Order> doneQueue = new ArrayList<>();   // 处理完成的订单
-//    private final Object lock = new Object();
-//    public void Cook(){
-//        while (true) {
-//            synchronized (lock) {
-//                while (orderQueue.isEmpty()) { // 没有订单时等待
-//                    try { lock.wait(); } catch (InterruptedException e) { e.printStackTrace(); }
+import javax.swing.*;
+import java.util.HashMap;
+
+public class Cook implements Runnable {
+
+    private final JTextArea cookStatusLabel;
+    private final Object lock; // 用于与 Server 通信
+    private final String name;
+
+    public Cook( String name, JTextArea cookStatusLabel, Object lock) {
+        this.cookStatusLabel = cookStatusLabel;
+        this.lock = lock;
+        this.name = name;
+    }
+
+    @Override
+    public void run() {
+        cookStatusLabel.setText(name);
+        while (true) {
+            Order currentOrder;
+
+            // 获取订单（加锁保证线程安全）
+            synchronized (CookOrderManager.getOrderList()) {
+//                while (CookOrderManager.getOrderList()==null) {
+//                    try {
+//                        CookOrderManager.wait(); // 没订单就等待
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
 //                }
-//                Order order = orderQueue.remove(0);
-//                System.out.println(Thread.currentThread().getName() + " 正在烹饪订单 " + order.getId());
-//
-//                try { Thread.sleep(2000); } catch (InterruptedException e) {} // 模拟烹饪时间
-//
-//                doneQueue.add(order); // 订单完成
-//                System.out.println(Thread.currentThread().getName() + " 完成订单 " + order.getId());
-//
-//                lock.notifyAll(); // 通知 Server 线程
-//            }
-//        }
-//    }
-//}
+                currentOrder = CookOrderManager.getOrder(); // 获取并移除头部订单
+                // empty
+                if (currentOrder==null){
+                    ServerOrderManager.addOrder(Order.createPoisonPill());
+                    break;
+                }
+                // sufficient
+                CookOrderManager.finishOrder(currentOrder);
+                cookStatusLabel.setText(name);
+            }
+
+            // === 模拟烹饪 ===
+            StringBuilder sb = new StringBuilder();
+            sb.append("\nProcessing ID =").append(currentOrder.getID()).append(" 's order.\n");
+            cookStatusLabel.append(sb.toString());
+            for (HashMap.Entry<MenuItem, Integer> entry : currentOrder.getOrder().entrySet()) {
+
+                cookStatusLabel.append(entry.getValue()+"\t"+entry.getKey().getName()+"\n");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+
+            // 模拟制作耗时
+            try {
+                cookStatusLabel.append("-- COOK DONE --");
+                ServerOrderManager.addOrder(currentOrder);
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
+                Thread.sleep(1000); // 例如3秒钟
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+}

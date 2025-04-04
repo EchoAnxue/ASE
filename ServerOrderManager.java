@@ -3,6 +3,10 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class ServerOrderManager {
+    public static Queue<Order> getOrderList() {
+        return orderList;
+    }
+
     // List of orders waiting to be cooked
     private static Queue<Order> orderList = new LinkedList<>();
 
