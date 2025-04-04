@@ -72,6 +72,8 @@ public class Server implements Runnable {
                 Thread.sleep(1000); // Ä£ÄâËÍ²ÍÊ±¼ä
                 GUIOrderManager.finishOrder(orderToServe.getID());
                 ServerStatusTextArea.append("\n--- Delivered! ---");
+                ServerOrderManager.addOrder(currentOrder);
+
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

@@ -49,6 +49,22 @@ public class CafeThreadGUI extends JFrame {
         }
         statusPanel.add(threadPanel);
 
+        // --- 显示：已完成和已送达 ---
+        JPanel midPanel = new JPanel(new GridLayout(1, 2));
+
+        readyToServeArea.setEditable(false);
+        readyToServeArea.setLineWrap(true);
+        JScrollPane readyScrollPane = new JScrollPane(readyToServeArea);
+
+        deliveredOrdersArea.setEditable(false);
+        deliveredOrdersArea.setLineWrap(true);
+        JScrollPane deliveredScrollPane = new JScrollPane(deliveredOrdersArea);
+        
+        midPanel.add(readyScrollPane);
+        midPanel.add(deliveredScrollPane);
+        
+        statusPanel.add(midPanel);
+        
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
 
@@ -102,6 +118,26 @@ public class CafeThreadGUI extends JFrame {
 //
         // === 启动服务线程 ===
 
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
+            SwingUtilities.invokeLater(() -> {
+                // 更新 readyToServeArea
+                StringBuilder readyText = new StringBuilder("Ready Orders:\n");
+                for (Order order : ServerOrderManager.getOrderList()) {
+                readyText.append("Order ").append(order.getID()).append(" - ")
+                    .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                }
+                readyToServeArea.setText(readyText.toString());
+                
+                // 更新 deliveredOrdersArea
+                StringBuilder deliveredText = new StringBuilder("Delivered Orders:\n");
+                for (Order order : DeliveredOrderManager.getDeliveredOrders()) {
+                    deliveredText.append("Order ").append(order.getID()).append(" - ")
+                        .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                }
+            deliveredOrdersArea.setText(deliveredText.toString());
+            });
+        }, 0, 1, TimeUnit.SECONDS); // 每1秒刷新
 
         setVisible(true);
     }
