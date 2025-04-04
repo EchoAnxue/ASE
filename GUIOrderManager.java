@@ -5,12 +5,20 @@ import java.util.NoSuchElementException;
 public class GUIOrderManager {
     private static GUIOrderNode head;
     private static GUIOrderNode tail;
-    private static Map<Integer, GUIOrderNode> orderMap;
+
+
+    private static Map<Integer, GUIOrderNode> orderMap = new HashMap<>();
 
     public GUIOrderManager() {
         this.head = null;
         this.tail = null;
         this.orderMap = new HashMap<>();
+    }
+    public static Map<Integer, GUIOrderNode> getOrderMap() {
+        return orderMap;
+    }
+    public static int getSize(){
+        return orderMap.size();
     }
 
     public static void addOrder(Order order) {
@@ -18,7 +26,7 @@ public class GUIOrderManager {
             throw new IllegalArgumentException("Order cannot be null");
         }
         int id = order.getID();
-        if (orderMap.containsKey(id)) {
+        if (orderMap!=null&&orderMap.containsKey(id)) {
             throw new IllegalStateException("Order ID already exists: " + id);
         }
 

@@ -95,6 +95,7 @@ public class DataLoader {
     }
  public static void loadOrder() throws CSVReadException, IOException {
     try {
+        loadMenu();
         BufferedReader reader = new BufferedReader(new FileReader("order.csv"));
 
 

@@ -180,7 +180,7 @@ public class OrderManager {
         for (List<Order> orders : orderList)
             for (Order order : orders)
                 if (order.getID() == orderID)
-                    return CustomerList.getCustomerByID(order.getCustoID());
+                    return cusotmerList.get(order.getCustoID());
         return null;
     }
 

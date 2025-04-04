@@ -186,7 +186,9 @@ public class Order {
 
         return prize;
     }
-
+    public LocalDateTime getParsedTime() {
+        return LocalDateTime.parse(time);  // ISO 格式时间戳
+    }
     // toString method to print the order details
     // return: a string representation of the order
     @Override

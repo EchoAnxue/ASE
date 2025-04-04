@@ -319,9 +319,6 @@ public class ShopGUI {
 
     public static void main(String[] args)  {
 
-//        OrderManager orderManager = new OrderManager();
-
-
         SwingUtilities.invokeLater(ShopGUI::new);
 
     }
