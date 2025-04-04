@@ -40,15 +40,6 @@ public class CafeThreadGUI extends JFrame {
 
         statusPanel.add(scrollPane);
 
-        JPanel threadPanel = new JPanel(new GridLayout(1,4));
-
-        String[] staffNames = { "Cook 1", "Cook 2","Server 1", "Server 2",};
-        for (int i = 0; i < 4; i++) {
-            serverStatus[i] = new JTextArea(staffNames[i] + " status: free");
-            threadPanel.add(serverStatus[i]);
-        }
-        statusPanel.add(threadPanel);
-
         // --- 显示：已完成和已送达 ---
         JPanel midPanel = new JPanel(new GridLayout(1, 2));
 
@@ -64,6 +55,15 @@ public class CafeThreadGUI extends JFrame {
         midPanel.add(deliveredScrollPane);
         
         statusPanel.add(midPanel);
+
+        JPanel threadPanel = new JPanel(new GridLayout(1,4));
+
+        String[] staffNames = { "Cook 1", "Cook 2","Server 1", "Server 2",};
+        for (int i = 0; i < 4; i++) {
+            serverStatus[i] = new JTextArea(staffNames[i] + " status: free");
+            threadPanel.add(serverStatus[i]);
+        }
+        statusPanel.add(threadPanel);
         
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
