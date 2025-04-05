@@ -37,9 +37,10 @@ public class CafeThreadGUI extends JFrame {
         queueLabel.setLineWrap(true);               // 自动换行
         queueLabel.setWrapStyleWord(true);          // 以单词边界换行（更美观）
 
-        JScrollPane scrollPane = new JScrollPane(queueLabel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // 总是显示垂直滚动条
-        scrollPane.setPreferredSize(new Dimension(350, 200)); // 可以自定义尺寸
+        JPanel scrollPane = new JPanel(new BorderLayout());
+        scrollPane.add(queueLabel);
+//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // 总是显示垂直滚动条
+//        scrollPane.setPreferredSize(new Dimension(700, 200)); // 可以自定义尺寸
 
 
         subStatusPanel.add(scrollPane);
@@ -206,7 +207,7 @@ public class CafeThreadGUI extends JFrame {
                 }
 
             });
-        }, 0, 1, TimeUnit.MILLISECONDS); // 每1秒刷新
+        }, 0, 100, TimeUnit.MILLISECONDS); // 每1秒刷新
 
                 // 时间控制面板
         JPanel timeControlPanel = new JPanel();
