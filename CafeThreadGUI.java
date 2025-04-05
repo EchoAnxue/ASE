@@ -19,6 +19,9 @@ public class CafeThreadGUI extends JFrame {
     private JTextArea[] serverStatus = new JTextArea[4];
     private JTextArea reportArea = new JTextArea();
     private OrderManager orderManager;
+
+    private volatile boolean isShutdownScheduled = false;
+
     public CafeThreadGUI() {
 
         orderManager = new OrderManager();
@@ -149,6 +152,24 @@ public class CafeThreadGUI extends JFrame {
                         .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
                 }
             deliveredOrdersArea.setText(deliveredText.toString());
+
+            // 检查是否所有队列都为空
+                boolean allDone = CookOrderManager.getOrderList().isEmpty() &&
+                        ServerOrderManager.getOrderList().isEmpty();
+
+                if (allDone && !isShutdownScheduled) {
+                    // 等 10 秒后自动关闭程序
+                    isShutdownScheduled = true;
+                    System.out.println("All orders completed. Closing application in 10 seconds...");
+                    JOptionPane.showMessageDialog(this,
+                            "All orders completed. Closing application in 10 seconds...",
+                            "Info",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    executor.schedule(() -> {
+                        dispose();            // 关闭窗口
+                        System.exit(0);       // 完全退出程序
+                    }, 10, TimeUnit.SECONDS);
+                }
             });
         }, 0, 1, TimeUnit.SECONDS); // 每1秒刷新
 
