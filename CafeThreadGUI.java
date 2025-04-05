@@ -72,9 +72,6 @@ public class CafeThreadGUI extends JFrame {
         addCustomerBtn.addActionListener(e -> {
 
 
-
-            queueLabel.setText("There are currently "+ GUIOrderManager.getSize() +
-                    " people waiting in the queue：" + "\n" + result);
             addCustomerBtn.setVisible(false);
             String[] staffThreadNames = {"Cook 1", "Cook 2","Server 1", "Server 2", };
             Object lock = new Object();
@@ -124,6 +121,19 @@ public class CafeThreadGUI extends JFrame {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
+                // 显示等待烹饪的订单
+                StringBuilder waitingText = new StringBuilder("Waiting to Cook Orders:\n");
+                Queue<Order> waitingOrders = CookOrderManager.getOrderList();
+
+                synchronized (waitingOrders) {
+                    for (Order order : waitingOrders) {
+                        if (!order.isPoisonPill()) {
+                            waitingText.append("Order ").append(order.getID()).append(" - ")
+                                    .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName())
+                                    .append("\n");
+                        }
+                    }
+                }
                 // 更新 readyToServeArea
                 StringBuilder readyText = new StringBuilder("Ready Orders:\n");
                 for (Order order : ServerOrderManager.getOrderList()) {
