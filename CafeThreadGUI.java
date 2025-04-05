@@ -2,6 +2,7 @@
 import javax.swing.*;
         import java.awt.*;
         import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -97,6 +98,7 @@ public class CafeThreadGUI extends JFrame {
 
             new Thread(() -> {
                 try {
+                    Logger.getInstance().log("Cafe open.\n");
                     for (int i = 0; i < 2; i++) {
                         if (serverThreads[i] != null) {
                             serverThreads[i].join();  // 等待线程完成
@@ -105,6 +107,12 @@ public class CafeThreadGUI extends JFrame {
                             System.out.println("Thread " + i + " is null");
                         }
                     }
+
+                    // Generate report and log
+                    ReportGenerator.countInformation(orderManager);
+                    ReportGenerator.printReport("report.txt");
+                    Logger.getInstance().log("Complete generating report and log.\n");
+                    Logger.getInstance().saveToFile();
 
                     UIManager.put("OptionPane.okButtonText", "OK");
                     JOptionPane.showMessageDialog(this, 
@@ -121,7 +129,7 @@ public class CafeThreadGUI extends JFrame {
                             System.exit(0); // 完全退出程序
                         });
                     }, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException ex) {
+                } catch (InterruptedException | IOException ex) {
                     ex.printStackTrace();
                 }
             }).start();  // 启动等待线程

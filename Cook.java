@@ -37,6 +37,9 @@ public class Cook implements Runnable {
                 // sufficient
                 CookOrderManager.finishOrder(currentOrder);
                 cookStatusLabel.setText(name);
+
+                Logger.getInstance().log(name + " gets an order from waiting to cook list.\n");
+                Logger.getInstance().logOrder(currentOrder);
             }
 
             // === ƒ£ƒ‚≈Î‚ø ===
@@ -47,6 +50,7 @@ public class Cook implements Runnable {
 
                 cookStatusLabel.append(entry.getValue()+"\t"+entry.getKey().getName()+"\n");
                 try {
+                    Logger.getInstance().log(name + " starts cooking Order" + currentOrder.getID() + ".\n");
                     Thread.sleep(TimeManager.adjustTime(1000));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -59,10 +63,11 @@ public class Cook implements Runnable {
             try {
                 cookStatusLabel.append("-- COOK DONE --");
                 ServerOrderManager.addOrder(currentOrder);
+                Logger.getInstance().log(name + " finishes cooking Order" + currentOrder.getID() + ".\n");
                 synchronized (lock) {
                     lock.notifyAll();
                 }
-                Thread.sleep(TimeManager.adjustTime(1000)); // ¿˝»Á3√Î÷”
+                Thread.sleep(TimeManager.adjustTime(1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
