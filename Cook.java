@@ -47,7 +47,7 @@ public class Cook implements Runnable {
 
                 cookStatusLabel.append(entry.getValue()+"\t"+entry.getKey().getName()+"\n");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(TimeManager.adjustTime(1000));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -62,7 +62,7 @@ public class Cook implements Runnable {
                 synchronized (lock) {
                     lock.notifyAll();
                 }
-                Thread.sleep(1000); // ¿˝»Á3√Î÷”
+                Thread.sleep(TimeManager.adjustTime(1000)); // ¿˝»Á3√Î÷”
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

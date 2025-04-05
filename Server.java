@@ -55,12 +55,12 @@ public class Server implements Runnable {
                 int totalItemCount = orderToServe.getOrder().size();
 
                 ServerStatusTextArea.append("\n Customer: \t" + customerName);
-                Thread.sleep(1000);
+                Thread.sleep(TimeManager.adjustTime(1000));
 //                item
                 for (HashMap.Entry<MenuItem, Integer> entry : orderToServe.getOrder().entrySet()) {
 
                     ServerStatusTextArea.append("\n" + entry.getValue() + "\t" + entry.getKey().getName());
-                    Thread.sleep(1000);
+                    Thread.sleep(TimeManager.adjustTime(1000));
 
 
                 }
@@ -69,7 +69,7 @@ public class Server implements Runnable {
                 ServerStatusTextArea.append("\ntotal discount :\t"
                         + String.valueOf(orderToServe.getTotalDiscount()));
 
-                Thread.sleep(1000); // 模拟送餐时间
+                Thread.sleep(TimeManager.adjustTime(1000)); // 模拟送餐时间
                 GUIOrderManager.finishOrder(orderToServe.getID());
                 ServerStatusTextArea.append("\n--- Delivered! ---");
                 DeliveredOrderManager.addDeliveredOrder(orderToServe);

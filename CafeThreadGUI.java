@@ -141,6 +141,33 @@ public class CafeThreadGUI extends JFrame {
             });
         }, 0, 1, TimeUnit.SECONDS); // 每1秒刷新
 
+                // 时间控制面板
+        JPanel timeControlPanel = new JPanel();
+        JLabel multiplierLabel = new JLabel();
+        TimeManager.bindLabel(multiplierLabel);  // 绑定显示倍率的 JLabel
+
+        JButton speed05 = new JButton("x0.5");
+        JButton speed025 = new JButton("x0.25");
+        JButton speed1 = new JButton("x1");
+        JButton speed15 = new JButton("x1.5");
+        JButton speed2 = new JButton("x2");
+
+        speed05.addActionListener(e -> TimeManager.setTimeMultiplier(0.5));
+        speed025.addActionListener(e -> TimeManager.setTimeMultiplier(0.25));
+        speed1.addActionListener(e -> TimeManager.setTimeMultiplier(1.0));
+        speed15.addActionListener(e -> TimeManager.setTimeMultiplier(1.5));
+        speed2.addActionListener(e -> TimeManager.setTimeMultiplier(2.0));
+
+        timeControlPanel.add(new JLabel("Time Scale Control: (Faster <--)"));
+        timeControlPanel.add(speed025);
+        timeControlPanel.add(speed05);
+        timeControlPanel.add(speed1);
+        timeControlPanel.add(speed15);
+        timeControlPanel.add(speed2);
+        timeControlPanel.add(multiplierLabel);
+
+        add(timeControlPanel, BorderLayout.SOUTH);
+
         setVisible(true);
     }
 
