@@ -105,13 +105,20 @@ public class CafeThreadGUI extends JFrame {
                         }
                     }
 
-                    // 线程完成后更新 UI
-                    SwingUtilities.invokeLater(() -> {
-                        // 这里可以执行 UI 更新操作，比如刷新界面
-                        System.out.println("All threads finished, now update the UI");
-                        // exit
-                        System.exit(0);
-                    });
+                    JOptionPane.showMessageDialog(this, 
+                        "All threads finished, updating the UI and closing application in 10 seconds...", 
+                        "Info", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                    System.out.println("All threads finished, updating the UI and closing application in 10 seconds...");
+
+                    // === 在10秒后关闭窗口 ===
+                    ScheduledExecutorService shutdownExecutor = Executors.newSingleThreadScheduledExecutor();
+                    shutdownExecutor.schedule(() -> {
+                        SwingUtilities.invokeLater(() -> {
+                            dispose(); // 关闭窗口
+                            System.exit(0); // 完全退出程序
+                        });
+                    }, 10, TimeUnit.SECONDS);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
