@@ -169,12 +169,16 @@ public class Order {
     public Map<MenuItem, Integer> getOrder() {
         return itemsOrdered;
     }
+
     public static Order createPoisonPill() {
         Order o = new Order(-9,new Customer(-9,"poisonpill",0));
         o.time = "poisonpill";
         return o;
     }
 
+    public boolean isPoisonPill(){
+        return this.getTime().equals("poisonpill");
+    }
 
     public int getCustoID() {
         return customerID;

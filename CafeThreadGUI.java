@@ -126,7 +126,7 @@ public class CafeThreadGUI extends JFrame {
                 // 更新 readyToServeArea
                 StringBuilder readyText = new StringBuilder("Ready Orders:\n");
                 for (Order order : ServerOrderManager.getOrderList()) {
-                readyText.append("Order ").append(order.getID()).append(" - ")
+                if(!order.isPoisonPill()) readyText.append("Order ").append(order.getID()).append(" - ")
                     .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
                 }
                 readyToServeArea.setText(readyText.toString());
@@ -134,7 +134,7 @@ public class CafeThreadGUI extends JFrame {
                 // 更新 deliveredOrdersArea
                 StringBuilder deliveredText = new StringBuilder("Delivered Orders:\n");
                 for (Order order : DeliveredOrderManager.getDeliveredOrders()) {
-                    deliveredText.append("Order ").append(order.getID()).append(" - ")
+                    if(!order.isPoisonPill()) deliveredText.append("Order ").append(order.getID()).append(" - ")
                         .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
                 }
             deliveredOrdersArea.setText(deliveredText.toString());
