@@ -105,6 +105,7 @@ public class CafeThreadGUI extends JFrame {
                         }
                     }
 
+                    UIManager.put("OptionPane.okButtonText", "OK");
                     JOptionPane.showMessageDialog(this, 
                         "All threads finished, updating the UI and closing application in 10 seconds...", 
                         "Info", 
