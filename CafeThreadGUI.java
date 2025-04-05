@@ -2,6 +2,7 @@
 import javax.swing.*;
         import java.awt.*;
         import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
@@ -155,11 +156,27 @@ public class CafeThreadGUI extends JFrame {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
+
+                // 显示等待烹饪的订单
+                StringBuilder waitingText = new StringBuilder("Waiting to Cook Orders:\n");
+               List<Order> waitingOrders = new ArrayList<>(CookOrderManager.getOrderList());
+
+                synchronized (waitingOrders) {
+                    for (Order order : waitingOrders) {
+                        if (!order.isPoisonPill()) {
+                            waitingText.append("Order ").append(order.getID()).append(" - ")
+                                    .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName())
+                                    .append("\n");
+                        }
+                    }
+                }
+
+                queueLabel.setText(waitingText.toString());
+
                 // 更新 readyToServeArea
                 StringBuilder readyText = new StringBuilder("Waiting for Serverd Orders:\n");
-                Queue<Order> orders = ServerOrderManager.getOrderList();
+                List<Order> orders = new ArrayList<>(ServerOrderManager.getOrderList());
                 if (orders !=null){
-
                     for (Order order : orders) {
                         if(!order.isPoisonPill()) readyText.append("Order ").append(order.getID()).append(" - ")
                                 .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
@@ -170,7 +187,7 @@ public class CafeThreadGUI extends JFrame {
                 
                 // 更新 deliveredOrdersArea
                 StringBuilder deliveredText = new StringBuilder("Delivered Orders:\n");
-                List<Order> orders2 = DeliveredOrderManager.getDeliveredOrders();
+                List<Order> orders2 = new ArrayList<>(DeliveredOrderManager.getDeliveredOrders());
                 if(orders2!=null){
 
                     for (Order order :orders2) {
