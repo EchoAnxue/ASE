@@ -74,10 +74,13 @@ public class CafeThreadGUI extends JFrame {
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
 
-
+            Logger.getInstance().log("Cafe open.\n");
 
             queueLabel.setText("There are currently "+ GUIOrderManager.getSize() +
                     " people waiting in the queue：" + "\n" + result);
+
+            Logger.getInstance().log("Customer is added into queue.\n");
+
             addCustomerBtn.setVisible(false);
             String[] staffThreadNames = {"Cook 1", "Cook 2","Server 1", "Server 2", };
             Object lock = new Object();
@@ -98,7 +101,6 @@ public class CafeThreadGUI extends JFrame {
 
             new Thread(() -> {
                 try {
-                    Logger.getInstance().log("Cafe open.\n");
                     for (int i = 0; i < 2; i++) {
                         if (serverThreads[i] != null) {
                             serverThreads[i].join();  // 等待线程完成
