@@ -67,7 +67,7 @@ public class CafeThreadGUI extends JFrame {
             threadPanel.add(serverStatus[i]);
         }
         statusPanel.add(threadPanel);
-        
+        Thread[] serverThreads = new Thread[2];
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
 
@@ -78,6 +78,8 @@ public class CafeThreadGUI extends JFrame {
             addCustomerBtn.setVisible(false);
             String[] staffThreadNames = {"Cook 1", "Cook 2","Server 1", "Server 2", };
             Object lock = new Object();
+
+
             for (int i = 0; i < 2; i++) {
                 Cook s = new Cook(staffThreadNames[i], serverStatus[i],lock);
                 new Thread(s).start();
@@ -85,11 +87,40 @@ public class CafeThreadGUI extends JFrame {
 
             for (int i = 2; i < 4; i++) {
                 Server s = new Server(staffThreadNames[i], serverStatus[i],orderManager,lock);
-                new Thread(s).start();
+                serverThreads[i-2] = new Thread(s);
+                serverThreads[i-2].start();
             }
 
 
+
+            new Thread(() -> {
+                try {
+                    for (int i = 0; i < 2; i++) {
+                        if (serverThreads[i] != null) {
+                            serverThreads[i].join();  // 等待线程完成
+                            System.out.println("Thread " + i + " finished");
+                        } else {
+                            System.out.println("Thread " + i + " is null");
+                        }
+                    }
+
+                    // 线程完成后更新 UI
+                    SwingUtilities.invokeLater(() -> {
+                        // 这里可以执行 UI 更新操作，比如刷新界面
+                        System.out.println("All threads finished, now update the UI");
+                        // exit
+                        System.exit(0);
+                    });
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }).start();  // 启动等待线程
+
+
+
+
         });
+
 
 //        JButton switchToReportBtn = new JButton("see report");
 //        switchToReportBtn.addActionListener(e -> cardLayout.show(cardPanel, "report"));
@@ -125,22 +156,32 @@ public class CafeThreadGUI extends JFrame {
         executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
                 // 更新 readyToServeArea
-                StringBuilder readyText = new StringBuilder("Ready Orders:\n");
-                for (Order order : ServerOrderManager.getOrderList()) {
-                if(!order.isPoisonPill()) readyText.append("Order ").append(order.getID()).append(" - ")
-                    .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                StringBuilder readyText = new StringBuilder("Waiting for Serverd Orders:\n");
+                Queue<Order> orders = ServerOrderManager.getOrderList();
+                if (orders !=null){
+
+                    for (Order order : orders) {
+                        if(!order.isPoisonPill()) readyText.append("Order ").append(order.getID()).append(" - ")
+                                .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                    }
+                    readyToServeArea.setText(readyText.toString());
                 }
-                readyToServeArea.setText(readyText.toString());
+
                 
                 // 更新 deliveredOrdersArea
                 StringBuilder deliveredText = new StringBuilder("Delivered Orders:\n");
-                for (Order order : DeliveredOrderManager.getDeliveredOrders()) {
-                    if(!order.isPoisonPill()) deliveredText.append("Order ").append(order.getID()).append(" - ")
-                        .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                List<Order> orders2 = DeliveredOrderManager.getDeliveredOrders();
+                if(orders2!=null){
+
+                    for (Order order :orders2) {
+                        if(!order.isPoisonPill()) deliveredText.append("Order ").append(order.getID()).append(" - ")
+                                .append("Customer: ").append(orderManager.getCustomerByOrder(order.getID()).getName()).append("\n");
+                    }
+                    deliveredOrdersArea.setText(deliveredText.toString());
                 }
-            deliveredOrdersArea.setText(deliveredText.toString());
+
             });
-        }, 0, 1, TimeUnit.SECONDS); // 每1秒刷新
+        }, 0, 1, TimeUnit.MILLISECONDS); // 每1秒刷新
 
                 // 时间控制面板
         JPanel timeControlPanel = new JPanel();
@@ -170,6 +211,15 @@ public class CafeThreadGUI extends JFrame {
         add(timeControlPanel, BorderLayout.SOUTH);
 
         setVisible(true);
+
+
+//        SwingUtilities.invokeLater(() -> {
+//            this.dispose();  // 关闭 GUI 窗口
+//            System.exit(0);  // 退出整个程序
+//        });
+//
+//        System.exit(0);
+
     }
 
     private String SortOrderListToMap(List<List<Order>> orders) {
