@@ -42,13 +42,14 @@ public class Server implements Runnable {
 
             }
             if (orderToServe.getTime().equals("poisonpill")) {
-                ServerStatusTextArea.setText("\nDelivering FINISH");
+
+                ServerStatusTextArea.setText(name+"\nDelivering FINISH");
                 break;
             }
 
             // Ä£ÄâËÍ²Í
-
-            ServerStatusTextArea.setText("\nDelivering order ID = " + orderToServe.getID());
+            ServerStatusTextArea.setText(name);
+            ServerStatusTextArea.append("\nDelivering order ID = " + orderToServe.getID());
             try {
 
                 String customerName = orderManager.getCustomerByOrder(orderToServe.getID()).getName();
