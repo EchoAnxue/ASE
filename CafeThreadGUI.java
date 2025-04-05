@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 public class CafeThreadGUI extends JFrame {
     private CardLayout cardLayout = new CardLayout();
     private JPanel cardPanel = new JPanel(cardLayout);
+    private JTextArea readyToServeArea = new JTextArea("Ready Orders:\n");
+    private JTextArea deliveredOrdersArea = new JTextArea("Delivered Orders:\n");
 
 
     private JTextArea queueLabel = new JTextArea("current waiting orders£º0");
