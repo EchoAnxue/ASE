@@ -30,6 +30,7 @@ public class CafeThreadGUI extends JFrame {
 
         // === 卡片1：实时状态 ===
         JPanel statusPanel = new JPanel(new GridLayout(2, 1));
+        JPanel subStatusPanel = new JPanel(new GridLayout(1, 2));
 
         queueLabel.setEditable(false);              // 不允许编辑
         queueLabel.setLineWrap(true);               // 自动换行
@@ -40,7 +41,7 @@ public class CafeThreadGUI extends JFrame {
         scrollPane.setPreferredSize(new Dimension(350, 200)); // 可以自定义尺寸
 
 
-        statusPanel.add(scrollPane);
+        subStatusPanel.add(scrollPane);
 
         // --- 显示：已完成和已送达 ---
         JPanel midPanel = new JPanel(new GridLayout(1, 2));
@@ -55,9 +56,9 @@ public class CafeThreadGUI extends JFrame {
         
         midPanel.add(readyScrollPane);
         midPanel.add(deliveredScrollPane);
-        
-        statusPanel.add(midPanel);
 
+        subStatusPanel.add(midPanel);
+        statusPanel.add(subStatusPanel);
         JPanel threadPanel = new JPanel(new GridLayout(1,4));
 
         String[] staffNames = { "Cook 1", "Cook 2","Server 1", "Server 2",};
