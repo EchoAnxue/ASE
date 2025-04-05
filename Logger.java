@@ -22,9 +22,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Logger {
-    private List<String> logEntries;
+    private static List<String> logEntries;
     private static final String LOG_FILE = "log.txt";
     private static Logger instance; // Singleton instance
 
@@ -44,23 +45,86 @@ public class Logger {
         return instance;
     }
 
+    public static void logOrder(Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
+
+        // get total price and discounts
+        order.getOriginalPrice();
+        order.getTotalDiscount();
+
+        StringBuilder itemsDetails = new StringBuilder();
+        int totalItems = 0;
+
+        // iterate over order items and build detailed descriptions
+        for (Map.Entry<MenuItem, Integer> entry : order.getOrder().entrySet()) {
+            MenuItem item = entry.getKey();
+            int quantity = entry.getValue();
+            totalItems += quantity;
+
+            itemsDetails.append(String.format(
+                    "\n  - %s [%s] x%d | £%.2f each | Subtotal: £%.2f",
+                    item.getName(),
+                    item.getCategory(),
+                    quantity,
+                    item.getCost(),
+                    item.getCost() * quantity
+            ));
+        }
+
+        // format the full log
+        String logMessage = String.format(
+                "Order: ID=%d, CustomerID=%d, Time=%s\n" +
+                        "Items (%d):%s\n" +
+                        "Original Price: £%.2f | Total Discount: £%.2f | Final Price: £%.2f\n",
+                order.getID(),
+                order.getCustoID(),
+                order.getTime(),
+                totalItems,
+                itemsDetails.toString(),
+                order.getOriginalPrice(),
+                order.getTotalDiscount(),
+                order.getPrize()
+        );
+
+        logEntries.add(logMessage);
+    }
+
+
+    public static void log(String message) {
+        if (message == null) {
+            throw new IllegalArgumentException("Log message cannot be null");
+        }
+        logEntries.add(message);
+    }
+
     // Log ReportGenerator data
-    public void log(ReportGenerator reportGenerator) {
+    public static void log(ReportGenerator reportGenerator) {
+        if (reportGenerator == null) {
+            throw new IllegalArgumentException("ReportGenerator cannot be null");
+        }
         logEntries.add("Report Generated: Total Income = " + reportGenerator.getTotalIncome());
     }
 
     // Log CustomerList data
-    public void log(CustomerList customerList) {
+    public static void log(CustomerList customerList) {
+        if (customerList == null) {
+            throw new IllegalArgumentException("CustomerList cannot be null");
+        }
         logEntries.add("Customer List Updated: " + customerList.toString());
     }
 
     // Log Menu data
-    public void log(Menu menu) {
+    public static void log(Menu menu) {
+        if (menu == null) {
+            throw new IllegalArgumentException("Menu cannot be null");
+        }
         logEntries.add("Menu Updated: " + menu.toString());
     }
 
     // Save logs to file
-    public void saveToFile() {
+    public static void saveToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             for (String entry : logEntries) {
                 writer.write(entry);
@@ -72,5 +136,9 @@ public class Logger {
         }
     }
 
-    
+    // Getting log entries (for JUnit test)
+    public List<String> getLogEntries() {
+        return new ArrayList<>(logEntries); // 返回副本避免外部修改
+    }
+
 }
