@@ -2,6 +2,7 @@
 import javax.swing.*;
         import java.awt.*;
         import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -73,10 +74,13 @@ public class CafeThreadGUI extends JFrame {
         JButton addCustomerBtn = new JButton("OPEN Cafe");
         addCustomerBtn.addActionListener(e -> {
 
-
+            Logger.getInstance().log("Cafe open.\n");
 
             queueLabel.setText("There are currently "+ GUIOrderManager.getSize() +
                     " people waiting in the queue：" + "\n" + result);
+
+            Logger.getInstance().log("Customer is added into queue.\n");
+
             addCustomerBtn.setVisible(false);
             String[] staffThreadNames = {"Cook 1", "Cook 2","Server 1", "Server 2", };
             Object lock = new Object();
@@ -106,6 +110,12 @@ public class CafeThreadGUI extends JFrame {
                         }
                     }
 
+                    // Generate report and log
+                    ReportGenerator.countInformation(orderManager);
+                    ReportGenerator.printReport("report.txt");
+                    Logger.getInstance().log("Complete generating report and log.\n");
+                    Logger.getInstance().saveToFile();
+
                     UIManager.put("OptionPane.okButtonText", "OK");
                     JOptionPane.showMessageDialog(this, 
                         "All threads finished, updating the UI and closing application in 10 seconds...", 
@@ -121,7 +131,7 @@ public class CafeThreadGUI extends JFrame {
                             System.exit(0); // 完全退出程序
                         });
                     }, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException ex) {
+                } catch (InterruptedException | IOException ex) {
                     ex.printStackTrace();
                 }
             }).start();  // 启动等待线程

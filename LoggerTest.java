@@ -14,27 +14,27 @@ public class LoggerTest {
     // ---------------------- 测试异常场景 ----------------------
     @Test
     public void testLogOrder_NullOrder_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.logOrder(null));
+        assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().logOrder(null));
     }
 
     @Test
     public void testLogString_NullMessage_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.log((String) null));
+        assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().log((String) null));
     }
 
     @Test
     public void testLogReportGenerator_NullReport_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.log((ReportGenerator) null));
+        assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().log((ReportGenerator) null));
     }
 
     @Test
     public void testLogCustomerList_NullList_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.log((CustomerList) null));
+        assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().log((CustomerList) null));
     }
 
     @Test
     public void testLogMenu_NullMenu_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.log((Menu) null));
+        assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().log((Menu) null));
     }
 
     // ---------------------- 测试正常场景 ----------------------
@@ -47,7 +47,7 @@ public class LoggerTest {
         order.addItem(item, 2);
 
         // 调用日志方法
-        Logger.logOrder(order);
+        Logger.getInstance().logOrder(order);
 
         // 验证日志条目是否添加
         assertEquals(1, Logger.getInstance().getLogEntries().size());
@@ -55,7 +55,7 @@ public class LoggerTest {
 
     @Test
     public void testLogString_Success() {
-        Logger.log("Test message");
+        Logger.getInstance().log("Test message");
         assertTrue(Logger.getInstance().getLogEntries().contains("Test message"));
     }
 }

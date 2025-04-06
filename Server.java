@@ -39,6 +39,9 @@ public class Server implements Runnable {
                 }
                 ServerOrderManager.finishOrder(orderToServe);
 
+                Logger.getInstance().log(name + " gets an order from waiting to serve list.\n");
+                Logger.getInstance().logOrder(orderToServe);
+
 
             }
             if (orderToServe.getTime().equals("poisonpill")) {
@@ -51,6 +54,7 @@ public class Server implements Runnable {
             ServerStatusTextArea.setText(name);
             ServerStatusTextArea.append("\nDelivering order ID = " + orderToServe.getID());
             try {
+                Logger.getInstance().log(name + " starts serving Order" + orderToServe.getID() + ".\n");
 
                 String customerName = orderManager.getCustomerByOrder(orderToServe.getID()).getName();
                 int totalItemCount = orderToServe.getOrder().size();
@@ -74,7 +78,7 @@ public class Server implements Runnable {
                 GUIOrderManager.finishOrder(orderToServe.getID());
                 ServerStatusTextArea.append("\n--- Delivered! ---");
                 DeliveredOrderManager.addDeliveredOrder(orderToServe);
-
+                Logger.getInstance().log(name + " finishes serving Order" + orderToServe.getID() + ".\n");
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

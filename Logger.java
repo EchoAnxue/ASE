@@ -45,7 +45,7 @@ public class Logger {
         return instance;
     }
 
-    public static void logOrder(Order order) {
+    public void logOrder(Order order) {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null");
         }
@@ -64,7 +64,7 @@ public class Logger {
             totalItems += quantity;
 
             itemsDetails.append(String.format(
-                    "\n  - %s [%s] x%d | £%.2f each | Subtotal: £%.2f",
+                    "\n  - %s [%s] x%d | %.2f each | Subtotal: %.2f",
                     item.getName(),
                     item.getCategory(),
                     quantity,
@@ -73,14 +73,20 @@ public class Logger {
             ));
         }
 
+        // process time format
+        String rawTime = order.getTime();
+        String truncatedTime = rawTime.contains(".") ?
+                rawTime.split("\\.")[0] :  // cut millisecond
+                rawTime;
+
         // format the full log
         String logMessage = String.format(
                 "Order: ID=%d, CustomerID=%d, Time=%s\n" +
                         "Items (%d):%s\n" +
-                        "Original Price: £%.2f | Total Discount: £%.2f | Final Price: £%.2f\n",
+                        "Original Price: %.2f | Total Discount: %.2f | Final Price: %.2f\n",
                 order.getID(),
                 order.getCustoID(),
-                order.getTime(),
+                truncatedTime,  // 使用处理后的时间
                 totalItems,
                 itemsDetails.toString(),
                 order.getOriginalPrice(),
@@ -92,7 +98,7 @@ public class Logger {
     }
 
 
-    public static void log(String message) {
+    public void log(String message) {
         if (message == null) {
             throw new IllegalArgumentException("Log message cannot be null");
         }
@@ -100,7 +106,7 @@ public class Logger {
     }
 
     // Log ReportGenerator data
-    public static void log(ReportGenerator reportGenerator) {
+    public void log(ReportGenerator reportGenerator) {
         if (reportGenerator == null) {
             throw new IllegalArgumentException("ReportGenerator cannot be null");
         }
@@ -108,7 +114,7 @@ public class Logger {
     }
 
     // Log CustomerList data
-    public static void log(CustomerList customerList) {
+    public void log(CustomerList customerList) {
         if (customerList == null) {
             throw new IllegalArgumentException("CustomerList cannot be null");
         }
@@ -116,7 +122,7 @@ public class Logger {
     }
 
     // Log Menu data
-    public static void log(Menu menu) {
+    public void log(Menu menu) {
         if (menu == null) {
             throw new IllegalArgumentException("Menu cannot be null");
         }
@@ -124,8 +130,8 @@ public class Logger {
     }
 
     // Save logs to file
-    public static void saveToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
+    public void saveToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, false))) {
             for (String entry : logEntries) {
                 writer.write(entry);
                 writer.newLine();
