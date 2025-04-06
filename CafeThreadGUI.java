@@ -34,19 +34,18 @@ public class CafeThreadGUI extends JFrame {
         JPanel statusPanel = new JPanel(new GridLayout(2, 1));
         JPanel subStatusPanel = new JPanel(new GridLayout(1, 2));
 
-        queueLabel.setEditable(false);              // 不允许编辑
-        queueLabel.setLineWrap(true);               // 自动换行
-        queueLabel.setWrapStyleWord(true);          // 以单词边界换行（更美观）
+        queueLabel.setEditable(false);              // editable
+        queueLabel.setLineWrap(true);               // cr
+        queueLabel.setWrapStyleWord(true);          //
 
         JPanel scrollPane = new JPanel(new BorderLayout());
         scrollPane.add(queueLabel);
-//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // 总是显示垂直滚动条
-//        scrollPane.setPreferredSize(new Dimension(700, 200)); // 可以自定义尺寸
+
 
 
         subStatusPanel.add(scrollPane);
 
-        // --- 显示：已完成和已送达 ---
+        // --- ui：finished & delivered ---
         JPanel midPanel = new JPanel(new GridLayout(1, 2));
 
         readyToServeArea.setEditable(false);
@@ -87,7 +86,7 @@ public class CafeThreadGUI extends JFrame {
 
 
             for (int i = 0; i < 2; i++) {
-                Cook s = new Cook(staffThreadNames[i], serverStatus[i],lock);
+                Cook s = new Cook(staffThreadNames[i], serverStatus[i],lock,orderManager);
                 new Thread(s).start();
             }
 
@@ -103,7 +102,7 @@ public class CafeThreadGUI extends JFrame {
                 try {
                     for (int i = 0; i < 2; i++) {
                         if (serverThreads[i] != null) {
-                            serverThreads[i].join();  // 等待线程完成
+                            serverThreads[i].join();  // same time end
                             System.out.println("Thread " + i + " finished");
                         } else {
                             System.out.println("Thread " + i + " is null");
@@ -123,18 +122,18 @@ public class CafeThreadGUI extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
                     System.out.println("All threads finished, updating the UI and closing application in 10 seconds...");
 
-                    // === 在10秒后关闭窗口 ===
+                    // === 10 s exit ===
                     ScheduledExecutorService shutdownExecutor = Executors.newSingleThreadScheduledExecutor();
                     shutdownExecutor.schedule(() -> {
                         SwingUtilities.invokeLater(() -> {
-                            dispose(); // 关闭窗口
-                            System.exit(0); // 完全退出程序
+                            dispose(); // windows exit
+                            System.exit(0); // exit
                         });
                     }, 10, TimeUnit.SECONDS);
                 } catch (InterruptedException | IOException ex) {
                     ex.printStackTrace();
                 }
-            }).start();  // 启动等待线程
+            }).start();  // EDT
 
 
 
@@ -142,8 +141,6 @@ public class CafeThreadGUI extends JFrame {
         });
 
 
-//        JButton switchToReportBtn = new JButton("see report");
-//        switchToReportBtn.addActionListener(e -> cardLayout.show(cardPanel, "report"));
 
         JPanel controlPanel = new JPanel();
         controlPanel.add(addCustomerBtn);
@@ -153,30 +150,19 @@ public class CafeThreadGUI extends JFrame {
         card1.add(statusPanel, BorderLayout.CENTER);
         card1.add(controlPanel, BorderLayout.SOUTH);
 
-//        // === 卡片2：报告 ===
-//        reportArea.setEditable(false);
-//        JScrollPane reportScroll = new JScrollPane(reportArea);
-//
-//        JButton backToStatusBtn = new JButton("返回状态");
-//        backToStatusBtn.addActionListener(e -> cardLayout.show(cardPanel, "status"));
-//
-//        JPanel card2 = new JPanel(new BorderLayout());
-//        card2.add(reportScroll, BorderLayout.CENTER);
-//        card2.add(backToStatusBtn, BorderLayout.SOUTH);
-//
-//        // === 卡片面板组装 ===
+
         cardPanel.add(card1, "status");
 //        cardPanel.add(card2, "report");
 //
         add(cardPanel, BorderLayout.CENTER);
 //
-        // === 启动服务线程 ===
+        // === start refreshing waiting panel thread ===
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
 
-                // 显示等待烹饪的订单
+                // ui: Waiting to Cook Orders
                 StringBuilder waitingText = new StringBuilder("Waiting to Cook Orders:\n");
                List<Order> waitingOrders = new ArrayList<>(CookOrderManager.getOrderList());
 
@@ -192,7 +178,7 @@ public class CafeThreadGUI extends JFrame {
 
                 queueLabel.setText(waitingText.toString());
 
-                // 更新 readyToServeArea
+                // ui : update: readyToServeArea
                 StringBuilder readyText = new StringBuilder("Waiting for Serverd Orders:\n");
                 List<Order> orders = new ArrayList<>(ServerOrderManager.getOrderList());
                 if (orders !=null){
@@ -204,7 +190,7 @@ public class CafeThreadGUI extends JFrame {
                 }
 
                 
-                // 更新 deliveredOrdersArea
+                // UI:  deliveredOrdersArea
                 StringBuilder deliveredText = new StringBuilder("Delivered Orders:\n");
                 List<Order> orders2 = new ArrayList<>(DeliveredOrderManager.getDeliveredOrders());
                 if(orders2!=null){
@@ -217,12 +203,12 @@ public class CafeThreadGUI extends JFrame {
                 }
 
             });
-        }, 0, 100, TimeUnit.MILLISECONDS); // 每1秒刷新
+        }, 0, 100, TimeUnit.MILLISECONDS); // 0.1 s refresh rate
 
                 // 时间控制面板
         JPanel timeControlPanel = new JPanel();
         JLabel multiplierLabel = new JLabel();
-        TimeManager.bindLabel(multiplierLabel);  // 绑定显示倍率的 JLabel
+        TimeManager.bindLabel(multiplierLabel);  // rate  JLabel
 
         JButton speed05 = new JButton("x0.5");
         JButton speed025 = new JButton("x0.25");
@@ -249,12 +235,7 @@ public class CafeThreadGUI extends JFrame {
         setVisible(true);
 
 
-//        SwingUtilities.invokeLater(() -> {
-//            this.dispose();  // 关闭 GUI 窗口
-//            System.exit(0);  // 退出整个程序
-//        });
-//
-//        System.exit(0);
+
 
     }
 
@@ -285,7 +266,7 @@ public class CafeThreadGUI extends JFrame {
         }
 
         String result = sb.toString();
-        // 2. 放入 Queue（可选用 LinkedList 或 PriorityQueue）
+
         return result;
 
     }

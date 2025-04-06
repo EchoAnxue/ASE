@@ -1,8 +1,8 @@
 public class GUIOrderNode {
-    private int orderId;     // 订单唯一标识
-    private Order order;   // 订单数据（可自定义类型）
-    private GUIOrderNode prev;     // 前驱节点
-    private GUIOrderNode next;     // 后继节点
+    private int orderId;
+    private Order order;
+    private GUIOrderNode prev;
+    private GUIOrderNode next;
 
     public GUIOrderNode(Order order) {
         this.orderId = order.getID();

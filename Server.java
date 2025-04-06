@@ -4,7 +4,7 @@ import java.util.HashMap;
 public class Server implements Runnable {
 
     private final JTextArea ServerStatusTextArea;
-    private final Object lock; // 用于与 Server 通信
+    private final Object lock; // lock safety
     private final String name;
     private final OrderManager orderManager;
 
@@ -31,7 +31,7 @@ public class Server implements Runnable {
 
                 while (orderToServe == null) {
                     try {
-                        lock.wait(); // 等待 cook 通知
+                        lock.wait(); // sleep
                         orderToServe = ServerOrderManager.getOrder();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -50,13 +50,14 @@ public class Server implements Runnable {
                 break;
             }
 
-            // 模拟送餐
+            // =============  simulation============
             ServerStatusTextArea.setText(name);
-            ServerStatusTextArea.append("\nDelivering order ID = " + orderToServe.getID());
+
             try {
                 Logger.getInstance().log(name + " starts serving Order" + orderToServe.getID() + ".\n");
 
                 String customerName = orderManager.getCustomerByOrder(orderToServe.getID()).getName();
+                ServerStatusTextArea.append("\nDelivering order "+customerName+"( ID = " + orderToServe.getID()+" ) ");
                 int totalItemCount = orderToServe.getOrder().size();
 
                 ServerStatusTextArea.append("\n Customer: \t" + customerName);
@@ -74,7 +75,7 @@ public class Server implements Runnable {
                 ServerStatusTextArea.append("\ntotal discount :\t"
                         + String.valueOf(orderToServe.getTotalDiscount()));
 
-                Thread.sleep(TimeManager.adjustTime(1000)); // 模拟送餐时间
+                Thread.sleep(TimeManager.adjustTime(1000)); // time
                 GUIOrderManager.finishOrder(orderToServe.getID());
                 ServerStatusTextArea.append("\n--- Delivered! ---");
                 DeliveredOrderManager.addDeliveredOrder(orderToServe);

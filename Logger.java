@@ -86,7 +86,7 @@ public class Logger {
                         "Original Price: %.2f | Total Discount: %.2f | Final Price: %.2f\n",
                 order.getID(),
                 order.getCustoID(),
-                truncatedTime,  // 使用处理后的时间
+                truncatedTime,  // processing time
                 totalItems,
                 itemsDetails.toString(),
                 order.getOriginalPrice(),
@@ -144,7 +144,7 @@ public class Logger {
 
     // Getting log entries (for JUnit test)
     public List<String> getLogEntries() {
-        return new ArrayList<>(logEntries); // 返回副本避免外部修改
+        return new ArrayList<>(logEntries); // copy files
     }
 
 }

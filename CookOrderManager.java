@@ -23,7 +23,7 @@ public class CookOrderManager {
      * show the next order to cook
      */
     public static Order getOrder() {
-        return orderList.peek(); // 允许返回null表示队列为空
+        return orderList.peek(); // null is OK
     }
 
     /**

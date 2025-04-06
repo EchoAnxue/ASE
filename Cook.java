@@ -4,13 +4,15 @@ import java.util.HashMap;
 public class Cook implements Runnable {
 
     private final JTextArea cookStatusLabel;
-    private final Object lock; // 用于与 Server 通信
+    private final Object lock; //  Server lock
     private final String name;
+    private final OrderManager orderManager;
 
-    public Cook( String name, JTextArea cookStatusLabel, Object lock) {
+    public Cook( String name, JTextArea cookStatusLabel, Object lock, OrderManager orderManager) {
         this.cookStatusLabel = cookStatusLabel;
         this.lock = lock;
         this.name = name;
+        this.orderManager = orderManager;
     }
 
     @Override
@@ -19,16 +21,10 @@ public class Cook implements Runnable {
         while (true) {
             Order currentOrder;
 
-            // 获取订单（加锁保证线程安全）
+            // safe
             synchronized (CookOrderManager.getOrderList()) {
-//                while (CookOrderManager.getOrderList()==null) {
-//                    try {
-//                        CookOrderManager.wait(); // 没订单就等待
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-                currentOrder = CookOrderManager.getOrder(); // 获取并移除头部订单
+
+                currentOrder = CookOrderManager.getOrder(); // get and delete head order
                 // empty
                 if (currentOrder==null){
                     ServerOrderManager.addOrder(Order.createPoisonPill());
@@ -42,9 +38,10 @@ public class Cook implements Runnable {
                 Logger.getInstance().logOrder(currentOrder);
             }
 
-            // === 模拟烹饪 ===
+            // === UI simulation ===
             StringBuilder sb = new StringBuilder();
-            sb.append("\nProcessing ID =").append(currentOrder.getID()).append(" 's order.\n");
+            String customerName = orderManager.getCustomerByOrder(currentOrder.getID()).getName();
+            sb.append("\nProcessing "+ customerName +" (ID =").append(currentOrder.getID()).append(" )'s order.\n");
             cookStatusLabel.append(sb.toString());
             for (HashMap.Entry<MenuItem, Integer> entry : currentOrder.getOrder().entrySet()) {
 
@@ -59,12 +56,13 @@ public class Cook implements Runnable {
             }
 
 
-            // 模拟制作耗时
+            // UI COOK DONE
             try {
-                cookStatusLabel.append("-- COOK DONE --");
-                ServerOrderManager.addOrder(currentOrder);
-                Logger.getInstance().log(name + " finishes cooking Order" + currentOrder.getID() + ".\n");
+
                 synchronized (lock) {
+                    cookStatusLabel.append("-- COOK DONE --");
+                    ServerOrderManager.addOrder(currentOrder);
+                    Logger.getInstance().log(name + " finishes cooking Order" + currentOrder.getID() + ".\n");
                     lock.notifyAll();
                 }
                 Thread.sleep(TimeManager.adjustTime(1000));

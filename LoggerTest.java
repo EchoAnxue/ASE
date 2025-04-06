@@ -11,7 +11,7 @@ public class LoggerTest {
         Logger.getInstance().saveToFile(); // Empty log
     }
 
-    // ---------------------- 测试异常场景 ----------------------
+    // ---------------------- NOT NORMAL  ----------------------
     @Test
     public void testLogOrder_NullOrder_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().logOrder(null));
@@ -37,7 +37,7 @@ public class LoggerTest {
         assertThrows(IllegalArgumentException.class, () -> Logger.getInstance().log((Menu) null));
     }
 
-    // ---------------------- 测试正常场景 ----------------------
+    // ---------------------- Normal situation ----------------------
     @Test
     public void testLogOrder_Success() {
         // 模拟订单和菜单项
@@ -46,10 +46,10 @@ public class LoggerTest {
         MenuItem item = new MenuItem("Latte", "beverage", 3.5f, "B001", "Coffee");
         order.addItem(item, 2);
 
-        // 调用日志方法
+        // log example
         Logger.getInstance().logOrder(order);
 
-        // 验证日志条目是否添加
+        // assert
         assertEquals(1, Logger.getInstance().getLogEntries().size());
     }
 
